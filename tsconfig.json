@@ -1,10 +1,15 @@
 {
   "compilerOptions": {
-    "jsx": "react-jsx"
+    "target": "es2017",
+    "lib": ["es2017", "dom"],
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "jsx": "react-jsx",        // 👈 THIS fixes the JSX errors
+    "types": ["node"]          // 👈 THIS fixes Buffer/Node types
   },
-  "files": [],
-  "references": [
-    { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" }
-  ]
+  "include": ["src"]
 }

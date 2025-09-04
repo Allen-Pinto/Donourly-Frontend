@@ -4,18 +4,18 @@ import styled from "styled-components";
 import { motion } from "framer-motion";
 
 // Import pages
-import Home from "./pages/Home.tsx";
-import About from "./pages/About.tsx";
-import WhomWeHelp from "./pages/WhomWeHelp.tsx";
-import Contact from "./pages/Contact.tsx";
-import Option from "./pages/forms/Option.tsx";
-import Signup from "./pages/register/Signup.tsx";
-import Login from "./pages/register/Login.tsx";
-import Donour from "./pages/forms/Donour.tsx";
-import Receiver from "./pages/forms/Receiver.tsx";
-import Ask from "./pages/forms/Ask.tsx";
-import FormNavbar from "./components/FormNavbar.tsx";
-import PageWrapper from "./components/PageWrapper.tsx";
+import Home from "./pages/Home";
+import About from "./pages/About";
+import WhomWeHelp from "./pages/WhomWeHelp";
+import Contact from "./pages/Contact";
+import Option from "./pages/forms/Option";
+import Signup from "./pages/register/Signup";
+import Login from "./pages/register/Login";
+import Donour from "./pages/forms/Donour";
+import Receiver from "./pages/forms/Receiver";
+import Ask from "./pages/forms/Ask";
+import FormNavbar from "./components/FormNavbar";
+import PageWrapper from "./components/PageWrapper";
 
 // ------------------ Parallax Home Page ------------------
 const ParallaxHomePage = () => {
