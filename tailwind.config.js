@@ -9,6 +9,10 @@ module.exports = {
         mustard: "#d79b00",
         black: "#000000",
       },
+      fontFamily: {
+        // Add Poppins as default sans font
+        sans: ["Poppins", "sans-serif"],
+      },
     },
   },
   plugins: [],
