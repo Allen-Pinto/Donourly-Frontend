@@ -84,7 +84,7 @@ const Home: React.FC<Props> = () => {
             }
           }}
         >
-          DONATE NOW
+          RECEIVE NOW
         </HeroButton>
         <HeroButton onClick={handleOpenModal}>HELP PEOPLE</HeroButton>
       </HeroButtons>
@@ -162,7 +162,7 @@ const Home: React.FC<Props> = () => {
   );
 };
 
-// ✅ Styled Components - REMOVED BACKGROUND MAP
+// ✅ Styled Components
 
 const Container = styled.div`
   display: flex;
@@ -174,6 +174,7 @@ const Container = styled.div`
   overflow-x: hidden;
   overflow-y: hidden;
   position: relative;
+
 `;
 
 const HeroSection = styled.section`

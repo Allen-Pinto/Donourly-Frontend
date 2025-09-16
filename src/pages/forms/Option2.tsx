@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
-
 const StyledActionButtonLink = styled(Link)`
   font-family: 'Inter', sans-serif;
   font-weight: 600;
@@ -34,6 +33,38 @@ const StyledActionButtonLink = styled(Link)`
   
   &:hover .button-icon {
     transform: translateX(5px);
+  }
+`;
+
+const StyledReceiveButton = styled(Link)`
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: white;
+  background: linear-gradient(135deg, #FDC726 0%, #F0B90B 100%);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  box-shadow: 0 3px 10px rgba(253, 199, 38, 0.3);
+  
+  &:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 6px 20px rgba(253, 199, 38, 0.4);
+    background: linear-gradient(135deg, #F0B90B 0%, #E6A800 100%);
+  }
+  
+  .button-icon {
+    transition: transform 0.3s ease;
+  }
+  
+  &:hover .button-icon {
+    transform: translateX(3px);
   }
 `;
 
@@ -91,13 +122,13 @@ const StyledWrapper = styled.div`
     flex-wrap: wrap;
   }
 
-  .donor-section {
+  .receiver-section {
     flex: 1;
     min-width: 340px;
     max-width: 500px;
   }
 
-  .requests-section {
+  .donations-section {
     flex: 1;
     min-width: 340px;
     max-width: 600px;
@@ -146,9 +177,9 @@ const StyledWrapper = styled.div`
       rgba(255, 255, 255, 0.95) 0%,
       rgba(255, 255, 255, 0.85) 100%);
     box-shadow:
-      0 20px 40px rgba(0, 136, 255, 0.30),
-      0 0 60px rgba(0, 136, 255, 0.1),
-      0 0 0 1px rgba(0, 136, 255, 0.2),
+      0 20px 40px rgba(253, 199, 38, 0.30),
+      0 0 60px rgba(253, 199, 38, 0.1),
+      0 0 0 1px rgba(253, 199, 38, 0.2),
       inset 0 1px 0 rgba(255, 255, 255, 0.3);
   }
 
@@ -158,10 +189,10 @@ const StyledWrapper = styled.div`
     align-items: center;
     text-align: center;
     background: linear-gradient(135deg,
-      rgba(0, 136, 255, 0.9) 0%,
-      rgba(0, 102, 204, 0.95) 100%);
+      rgba(253, 199, 38, 0.9) 0%,
+      rgba(240, 185, 11, 0.95) 100%);
     box-shadow:
-      0 25px 50px rgba(0, 136, 255, 0.3),
+      0 25px 50px rgba(253, 199, 38, 0.3),
       inset 0 1px 0 rgba(255, 255, 255, 0.2);
   }
 
@@ -175,8 +206,8 @@ const StyledWrapper = styled.div`
     justify-content: center;
     font-size: 1.8rem;
     position: relative;
-    background: linear-gradient(135deg, #0088FF 0%, #0066CC 100%);
-    box-shadow: 0 8px 20px rgba(0, 136, 255, 0.3);
+    background: linear-gradient(135deg, #FDC726 0%, #F0B90B 100%);
+    box-shadow: 0 8px 20px rgba(253, 199, 38, 0.3);
   }
 
   .card-icon::before {
@@ -194,7 +225,7 @@ const StyledWrapper = styled.div`
     font-size: 1.7rem;
     margin: 0 0 1rem 0;
     text-align: center;
-    background: linear-gradient(135deg, #0088FF 0%, #0066CC 100%);
+    background: linear-gradient(135deg, #FDC726 0%, #F0B90B 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -297,54 +328,43 @@ const StyledWrapper = styled.div`
     line-height: 1.5;
   }
 
-.requests-card {
-  background: linear-gradient(135deg,
-    rgba(255, 255, 255, 0.95) 0%,
-    rgba(255, 255, 255, 0.85) 100%);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow:
-    0 20px 40px rgba(0, 136, 255, 0.15),
-    0 0 60px rgba(0, 136, 255, 0.05),
-    0 0 0 1px rgba(0, 136, 255, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3);
-  border-radius: 24px;
-  padding: 2.2rem;
-  height: 560px; 
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-.requests-feed {
-  flex: 1; 
-  overflow-y: auto; 
-  display: flow;
-  flex-direction: column;
-  gap: 1.5rem;
-  padding-right: 0.5rem;
-}
-
-
-  
-
-  .requests-header {
-    text-align: center;
-    margin-bottom: 2rem;
+  .donations-card {
+    background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.95) 0%,
+      rgba(255, 255, 255, 0.85) 100%);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow:
+      0 20px 40px rgba(253, 199, 38, 0.15),
+      0 0 60px rgba(253, 199, 38, 0.05),
+      0 0 0 1px rgba(253, 199, 38, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    border-radius: 24px;
+    padding: 2.2rem;
+    height: 460px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
   }
 
-  .requests-title {
+  .donations-header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    flex-shrink: 0;
+  }
+
+  .donations-title {
     font-family: 'Inter', sans-serif;
     font-weight: 700;
     font-size: 1.7rem;
     margin: 0 0 0.5rem 0;
-    background: linear-gradient(135deg, #0088FF 0%, #0066CC 100%);
+    background: linear-gradient(135deg, #FDC726 0%, #F0B90B 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 
-  .requests-subtitle {
+  .donations-subtitle {
     font-family: 'Inter', sans-serif;
     font-weight: 400;
     font-size: 0.9rem;
@@ -353,22 +373,47 @@ const StyledWrapper = styled.div`
     line-height: 1.5;
   }
 
+  .donations-feed {
+    display: flow;
+    flex-direction: column;
+    gap: 1.2rem;
+    overflow-y: auto;
+    flex: 1;
+    padding-right: 0.5rem;
+    margin-right: -0.5rem;
+  }
 
+  .donations-feed::-webkit-scrollbar {
+    width: 6px;
+  }
 
-  .request-item {
+  .donations-feed::-webkit-scrollbar-track {
+    background: rgba(253, 199, 38, 0.1);
+    border-radius: 3px;
+  }
+
+  .donations-feed::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #FDC726 0%, #F0B90B 100%);
+    border-radius: 3px;
+  }
+
+  .donations-feed::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #F0B90B 0%, #E6A800 100%);
+  }
+
+  .donation-item {
     background: rgba(255, 255, 255, 0.8);
-    border: 1px solid rgba(0, 136, 255, 0.1);
+    border: 1px solid rgba(253, 199, 38, 0.1);
     border-radius: 16px;
     padding: 1.5rem;
     transition: all 0.3s ease;
-    cursor: pointer;
     position: relative;
     overflow: hidden;
 
     &:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(0, 136, 255, 0.2);
-      border-color: rgba(0, 136, 255, 0.3);
+      box-shadow: 0 8px 25px rgba(253, 199, 38, 0.2);
+      border-color: rgba(253, 199, 38, 0.3);
     }
 
     &::before {
@@ -378,35 +423,36 @@ const StyledWrapper = styled.div`
       left: 0;
       width: 4px;
       height: 100%;
-      background: linear-gradient(135deg, #0088FF 0%, #0066CC 100%);
+      background: linear-gradient(135deg, #FDC726 0%, #F0B90B 100%);
     }
   }
 
-  .request-header {
+  .donation-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
     margin-bottom: 1rem;
   }
 
-  .request-org {
+  .donation-donor {
     font-family: 'Inter', sans-serif;
     font-weight: 600;
     font-size: 0.9rem;
-    color: #0088FF;
+    color: #FDC726;
     margin: 0;
   }
 
-  .request-time {
+  .donation-amount {
     font-family: 'Inter', sans-serif;
     font-size: 0.75rem;
-    color: #999;
-    background: rgba(0, 136, 255, 0.1);
+    color: white;
+    background: linear-gradient(135deg, #FDC726 0%, #F0B90B 100%);
     padding: 0.25rem 0.75rem;
     border-radius: 12px;
+    font-weight: 600;
   }
 
-  .request-title {
+  .donation-title {
     font-family: 'Inter', sans-serif;
     font-weight: 600;
     font-size: 1rem;
@@ -415,29 +461,25 @@ const StyledWrapper = styled.div`
     line-height: 1.4;
   }
 
-.request-description {
-  font-family: 'Inter', sans-serif;
-  font-size: 0.85rem;
-  color: #666;
-  margin: 0 0 1rem 0;
-  line-height: 1.5;
-  display: block;
-  overflow: visible;
-  -webkit-line-clamp: unset;
-  -webkit-box-orient: unset;
-}
+  .donation-description {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    color: #666;
+    margin: 0 0 1rem 0;
+    line-height: 1.5;
+  }
 
-
-  .request-details {
+  .donation-details {
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
     gap: 0.5rem;
+    margin-bottom: 1rem;
   }
 
-  .request-category {
-    background: linear-gradient(135deg, #0088FF 0%, #0066CC 100%);
+  .donation-category {
+    background: linear-gradient(135deg, #FDC726 0%, #F0B90B 100%);
     color: white;
     padding: 0.25rem 0.75rem;
     border-radius: 12px;
@@ -445,26 +487,18 @@ const StyledWrapper = styled.div`
     font-weight: 500;
   }
 
-  .request-urgency {
+  .donation-location {
+    background: rgba(253, 199, 38, 0.1);
+    color: #F0B90B;
     padding: 0.25rem 0.75rem;
     border-radius: 12px;
     font-size: 0.75rem;
     font-weight: 500;
+  }
 
-    &.high {
-      background: rgba(220, 53, 69, 0.1);
-      color: #dc3545;
-    }
-
-    &.medium {
-      background: rgba(253, 199, 38, 0.1);
-      color: #f0b90b;
-    }
-
-    &.low {
-      background: rgba(40, 167, 69, 0.1);
-      color: #28a745;
-    }
+  .donation-actions {
+    display: flex;
+    justify-content: flex-end;
   }
 
   .view-all-btn {
@@ -477,10 +511,10 @@ const StyledWrapper = styled.div`
     font-family: 'Inter', sans-serif;
     font-weight: 600;
     font-size: 0.9rem;
-    color: #0088FF;
+    color: #FDC726;
     text-decoration: none;
     padding: 0.75rem 1.5rem;
-    border: 1px solid rgba(0, 136, 255, 0.3);
+    border: 1px solid rgba(253, 199, 38, 0.3);
     border-radius: 12px;
     transition: all 0.3s ease;
     display: inline-flex;
@@ -488,8 +522,8 @@ const StyledWrapper = styled.div`
     gap: 0.5rem;
 
     &:hover {
-      background: rgba(0, 136, 255, 0.1);
-      border-color: #0088FF;
+      background: rgba(253, 199, 38, 0.1);
+      border-color: #FDC726;
       transform: translateY(-1px);
     }
   }
@@ -522,8 +556,8 @@ const StyledWrapper = styled.div`
       align-items: center;
     }
 
-    .donor-section,
-    .requests-section {
+    .receiver-section,
+    .donations-section {
       width: 100%;
       max-width: 400px;
     }
@@ -537,12 +571,12 @@ const StyledWrapper = styled.div`
     }
     
     .card-heading,
-    .requests-title {
+    .donations-title {
       font-size: 1.6rem;
     }
     
     .card-subtitle,
-    .requests-subtitle {
+    .donations-subtitle {
       font-size: 0.9rem;
     }
     
@@ -556,14 +590,14 @@ const StyledWrapper = styled.div`
       padding: 1.5rem 1rem;
     }
 
-    .donor-section,
-    .requests-section {
+    .receiver-section,
+    .donations-section {
       max-width: 320px;
     }
     
     .flip-card-front,
     .flip-card-back,
-    .requests-card {
+    .donations-card {
       padding: 1.8rem;
     }
     
@@ -572,12 +606,12 @@ const StyledWrapper = styled.div`
     }
     
     .card-heading,
-    .requests-title {
+    .donations-title {
       font-size: 1.4rem;
     }
     
     .card-subtitle,
-    .requests-subtitle {
+    .donations-subtitle {
       font-size: 0.85rem;
     }
     
@@ -585,10 +619,14 @@ const StyledWrapper = styled.div`
       font-size: 0.8rem;
     }
 
-    .request-header {
+    .donation-header {
       flex-direction: column;
       gap: 0.5rem;
       align-items: flex-start;
+    }
+
+    .donation-actions {
+      justify-content: center;
     }
   }
 `;
@@ -607,59 +645,59 @@ const ParallaxBackground = styled.div`
   will-change: transform;
 `;
 
-const Options = () => {
+const Options2 = () => {
   const { scrollYProgress } = useScroll();
   const backgroundY = useTransform(scrollYProgress, [0, 1], [0, -100]);
   const cardsY = useTransform(scrollYProgress, [0, 1], [0, -50]);
 
-  // Dummy request data
-  const dummyRequests = [
+  // Dummy donation data
+  const dummyDonations = [
     {
       id: 1,
-      org: "Hope Foundation",
-      title: "Educational Materials for Rural Schools",
-      description: "We need books, notebooks, and basic stationery for 200 children in remote villages. Your support can help bridge the education gap.",
+      donor: "Anonymous Donor",
+      title: "Educational Support Package",
+      description: "Complete educational materials including textbooks, notebooks, and stationery for students in need.",
       category: "Education",
-      urgency: "high",
-      time: "2 hours ago"
+      amount: "₹15,000",
+      location: "Mumbai"
     },
     {
       id: 2,
-      org: "Green Earth NGO",
-      title: "Tree Plantation Drive Support",
-      description: "Join us in our mission to plant 1000 trees this month. We need volunteers and funding for saplings and tools.",
-      category: "Environment",
-      urgency: "medium",
-      time: "5 hours ago"
+      donor: "TechCorp Foundation",
+      title: "Laptop for Digital Learning",
+      description: "Refurbished laptop with educational software installed, perfect for online learning and skill development.",
+      category: "Technology",
+      amount: "₹25,000",
+      location: "Bangalore"
     },
     {
       id: 3,
-      org: "Meals for All",
-      title: "Monthly Food Distribution",
-      description: "Help us provide nutritious meals to 500 families in need. Every contribution counts towards fighting hunger.",
+      donor: "Green Valley NGO",
+      title: "Monthly Food Rations",
+      description: "Essential food items including rice, dal, oil, and vegetables for a family of 4 for one month.",
       category: "Food",
-      urgency: "high",
-      time: "1 day ago"
+      amount: "₹5,000",
+      location: "Delhi"
     },
     {
       id: 4,
-      org: "Tech for Good",
-      title: "Digital Literacy Program",
-      description: "We're teaching basic computer skills to elderly citizens. Need laptops and volunteer instructors.",
-      category: "Technology",
-      urgency: "low",
-      time: "2 days ago"
+      donor: "Healthcare Heroes",
+      title: "Medical Treatment Fund",
+      description: "Financial assistance for medical treatment, including consultation fees and basic medications.",
+      category: "Healthcare",
+      amount: "₹30,000",
+      location: "Chennai"
+    },
+    {
+      id: 5,
+      donor: "Community Kitchen",
+      title: "Skill Training Workshop",
+      description: "Free vocational training in tailoring, cooking, or computer basics with certification.",
+      category: "Skills",
+      amount: "₹8,000",
+      location: "Pune"
     }
   ];
-
-  const getUrgencyClass = (urgency: string): string => {
-    switch(urgency) {
-      case 'high': return 'high';
-      case 'medium': return 'medium';
-      case 'low': return 'low';
-      default: return 'medium';
-    }
-  };
 
   return (
     <>
@@ -677,14 +715,14 @@ const Options = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
           >
-            <h1 className="main-title">Donor Dashboard</h1>
-            <p className="main-subtitle">Make a difference by supporting meaningful causes</p>
+            <h1 className="main-title">Receiver Dashboard</h1>
+            <p className="main-subtitle">Connect with generous donors and access the support you need</p>
           </motion.div>
 
           <div className="content-container">
-            {/* Donor Card Section */}
+            {/* Post Requirement Section */}
             <motion.div 
-              className="donor-section"
+              className="receiver-section"
               initial={{ opacity: 0, x: -100 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
@@ -694,14 +732,14 @@ const Options = () => {
                 <div className="flip-card-inner">
                   <div className="flip-card-front">
                     <div className="card-icon"></div>
-                    <h2 className="card-heading">BE A DONOR</h2>
-                    <p className="card-subtitle">Your small act can make a big difference.</p>
+                    <h2 className="card-heading">POST A REQUIREMENT</h2>
+                    <p className="card-subtitle">Share your needs and connect with generous hearts.</p>
                     <div className="features">
                       {[
-                        "Support with time or resources",
-                        "Help communities grow", 
-                        "Be part of positive change",
-                        "Inspire others to give"
+                        "Post specific requirements",
+                        "Connect with willing donors",
+                        "Share your story publicly", 
+                        "Track request responses"
                       ].map((text, index) => (
                         <motion.div 
                           key={index}
@@ -724,15 +762,15 @@ const Options = () => {
                     <div className="back-content">
                       <motion.div 
                         className="back-icon"
-                        animate={{ rotate: [0, 10, -10, 0] }}
+                        animate={{ y: [0, -10, 0] }}
                         transition={{ duration: 2, repeat: Infinity }}
                       >
-                        🚀
+                        💬
                       </motion.div>
-                      <h2 className="back-heading">Ready to Make Impact?</h2>
-                      <p className="back-description">Join thousands of donors creating positive change</p>
-                      <StyledActionButtonLink to="/donour">
-                        <span className="button-text">Start Donating</span>
+                      <h2 className="back-heading">Need Something?</h2>
+                      <p className="back-description">Post your request and let the community help you</p>
+                      <StyledActionButtonLink to="/ask">
+                        <span className="button-text">Post Request</span>
                         <span className="button-icon">→</span>
                       </StyledActionButtonLink>
                     </div>
@@ -741,52 +779,57 @@ const Options = () => {
               </div>
             </motion.div>
 
-            {/* Live Requests Feed Section */}
+            {/* Available Donations Section */}
             <motion.div 
-              className="requests-section"
+              className="donations-section"
               initial={{ opacity: 0, x: 100 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: 0.4 }}
             >
-              <div className="requests-card">
-                <div className="requests-header">
-                  <h2 className="requests-title">Live Requests Feed</h2>
-                  <p className="requests-subtitle">Recent requests from NGOs and communities in need</p>
+              <div className="donations-card">
+                <div className="donations-header">
+                  <h2 className="donations-title">Available Donations</h2>
+                  <p className="donations-subtitle">Support offered by generous donors in your community</p>
                 </div>
 
-                <div className="requests-feed">
-                  {dummyRequests.map((request, index) => (
+                <div className="donations-feed">
+                  {dummyDonations.map((donation, index) => (
                     <motion.div
-                      key={request.id}
-                      className="request-item"
+                      key={donation.id}
+                      className="donation-item"
                       initial={{ opacity: 0, y: 20 }}
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true }}
                       transition={{ duration: 0.4, delay: 0.6 + (index * 0.1) }}
                       whileHover={{ scale: 1.02 }}
                     >
-                      <div className="request-header">
-                        <p className="request-org">{request.org}</p>
-                        <span className="request-time">{request.time}</span>
+                      <div className="donation-header">
+                        <p className="donation-donor">{donation.donor}</p>
+                        <span className="donation-amount">{donation.amount}</span>
                       </div>
                       
-                      <h3 className="request-title">{request.title}</h3>
-                      <p className="request-description">{request.description}</p>
+                      <h3 className="donation-title">{donation.title}</h3>
+                      <p className="donation-description">{donation.description}</p>
                       
-                      <div className="request-details">
-                        <span className="request-category">{request.category}</span>
-                        <span className={`request-urgency ${getUrgencyClass(request.urgency)}`}>
-                          {request.urgency.toUpperCase()} PRIORITY
-                        </span>
+                      <div className="donation-details">
+                        <span className="donation-category">{donation.category}</span>
+                        <span className="donation-location">{donation.location}</span>
+                      </div>
+
+                      <div className="donation-actions">
+                        <StyledReceiveButton to="/receiver">
+                          <span>Receive Now</span>
+                          <span className="button-icon">→</span>
+                        </StyledReceiveButton>
                       </div>
                     </motion.div>
                   ))}
                 </div>
 
                 <div className="view-all-btn">
-                  <Link to="/requests" className="view-all-link">
-                    <span>View All Requests</span>
+                  <Link to="/donations" className="view-all-link">
+                    <span>View All Donations</span>
                     <span>→</span>
                   </Link>
                 </div>
@@ -799,4 +842,4 @@ const Options = () => {
   );
 };
 
-export default Options;
+export default Options2;

@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import Navbar2 from '../../components/Navbar3';
-import FormNavbar from '../../components/FormNavbar';
+import Navbar2 from '../../components/Navbar2';
 
 const Donour = () => {
   const [activeButton, setActiveButton] = useState('donour');
@@ -19,7 +18,6 @@ const Donour = () => {
         <BackButton onClick={handleBackClick}>
           <span>Back</span>
         </BackButton>
-        <FormNavbar activeButton={activeButton} onButtonClick={setActiveButton} />
       </TopBar>
       <StyledWrapper>
         {/* Inserted form from Donour2 */}
@@ -90,7 +88,7 @@ const BackButton = styled.button`
   z-index: 1;
   background: transparent;
   cursor: pointer;
-  margin-top: 17.6rem;
+  margin-top: 17rem;
   margin-right: 4.5rem;
 
   &::before,
@@ -167,6 +165,7 @@ const FormContainer = styled.form`
   background: #fff; 
   border-radius: 17px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  width: 60rem; 
 `;
 
 const FormRow = styled.div`

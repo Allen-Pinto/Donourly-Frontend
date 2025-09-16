@@ -1,9 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import Navbar from "./Navbar";
 import Navbar2 from "./Navbar2";
-import ParallaxNavbar from "./ParallaxNavbar"; 
 
 interface Props {
   children: React.ReactNode;
@@ -11,6 +10,9 @@ interface Props {
 
 const PageWrapper: React.FC<Props> = ({ children }) => {
   const location = useLocation();
+
+  // Manage userRole state here
+  const [userRole, setUserRole] = useState<"donor" | "receiver">("donor");
 
   // Show Navbar only on Home and Content pages
   const isHome = location.pathname === "/";
@@ -28,7 +30,11 @@ const PageWrapper: React.FC<Props> = ({ children }) => {
             transition={{ duration: 0.5, ease: "easeInOut" }}
             style={{ position: "sticky", top: 0, zIndex: 10 }}
           >
-            {isHome ? <Navbar /> : <Navbar2 />}
+            {isHome ? (
+              <Navbar userRole={userRole} setUserRole={setUserRole} />
+            ) : (
+              <Navbar2 />
+            )}
           </motion.div>
         </AnimatePresence>
       )}

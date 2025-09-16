@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import Navbar2 from "../../components/Navbar3";
-import FormNavbar from "../../components/FormNavbar";
+import Navbar2 from "../../components/Navbar2";
 
 const Ask = () => {
   const [activeButton, setActiveButton] = useState("ask");
@@ -48,7 +47,6 @@ const Ask = () => {
         <BackButton onClick={handleBackClick}>
           <span>Back</span>
         </BackButton>
-        <FormNavbar activeButton={activeButton} onButtonClick={setActiveButton} />
       </TopBar>
 
       <StyledWrapper>
@@ -254,6 +252,7 @@ const FormContainer = styled.form`
   background: white;
   border-radius: 17px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  width: 60rem;
 `;
 
 const FormRow = styled.div`
