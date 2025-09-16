@@ -5,10 +5,26 @@ import Navbar2 from '../../components/Navbar2';
 
 const Donour = () => {
   const [activeButton, setActiveButton] = useState('donour');
+  const [selectedItem, setSelectedItem] = useState('');
+  const [otherItem, setOtherItem] = useState('');
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const navigate = useNavigate();
 
   const handleBackClick = () => {
     navigate('/#options');
+  };
+
+  const handleItemChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedItem(e.target.value);
+    if (e.target.value !== 'other') {
+      setOtherItem('');
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setSelectedFile(e.target.files[0]);
+    }
   };
 
   return (
@@ -20,21 +36,31 @@ const Donour = () => {
         </BackButton>
       </TopBar>
       <StyledWrapper>
-        {/* Inserted form from Donour2 */}
         <FormContainer>
           <FormRow>
             <InputField type="text" placeholder="Enter your Name" />
             <InputField type="email" placeholder="Enter your E-Mail" />
           </FormRow>
+
           <FormRow>
-            <SelectField defaultValue="">
+            <SelectField defaultValue="" onChange={handleItemChange}>
               <option value="" disabled>
                 Type of Item
               </option>
               <option value="clothes">Clothes</option>
+              <option value="food">Non-perishable Food</option>
+              <option value="water">Packaged Water</option>
+              <option value="toiletries">Toiletries</option>
+              <option value="blankets">Blankets</option>
+              <option value="stationery">Stationery / School Supplies</option>
               <option value="electronics">Electronics</option>
               <option value="books">Books</option>
+              <option value="medicines">Basic Medicines / First Aid</option>
+              <option value="toys">Toys</option>
+              <option value="shoes">Shoes / Footwear</option>
+              <option value="other">Other</option>
             </SelectField>
+
             <SelectField defaultValue="">
               <option value="" disabled>
                 Item Condition
@@ -44,6 +70,18 @@ const Donour = () => {
               <option value="refurbished">Refurbished</option>
             </SelectField>
           </FormRow>
+
+          {selectedItem === 'other' && (
+            <FormRow>
+              <InputField
+                type="text"
+                placeholder="Please specify the item"
+                value={otherItem}
+                onChange={(e) => setOtherItem(e.target.value)}
+              />
+            </FormRow>
+          )}
+
           <FormRow>
             <SelectField defaultValue="">
               <option value="" disabled>
@@ -53,10 +91,27 @@ const Donour = () => {
               <option value="fair">Fair</option>
               <option value="poor">Poor</option>
             </SelectField>
-            <UploadButton>
-              Upload an Image <PlusSign>+</PlusSign>
-            </UploadButton>
+
+            <UploadWrapper>
+              <UploadButton
+                type="button"
+                onClick={() =>
+                  document.getElementById('fileInput')?.click()
+                }
+              >
+                {selectedFile ? selectedFile.name : 'Upload an Image'}{' '}
+                <PlusSign>+</PlusSign>
+              </UploadButton>
+              <input
+                id="fileInput"
+                type="file"
+                accept="image/*"
+                style={{ display: 'none' }}
+                onChange={handleFileChange}
+              />
+            </UploadWrapper>
           </FormRow>
+
           <DescriptionField placeholder="Briefly describe the item, its purpose, or any notes" />
           <SubmitButton>SUBMIT</SubmitButton>
         </FormContainer>
@@ -153,19 +208,18 @@ const StyledWrapper = styled.div`
   }
 `;
 
-/* --- Form styles from Donour2 --- */
 const FormContainer = styled.form`
   max-width: 900px;
-  margin: 2rem auto; /* right below navbar */
+  margin: 2rem auto;
   padding: 2rem;
   font-family: 'Poppins', sans-serif;
   display: flex;
   flex-direction: column;
   gap: 2rem;
-  background: #fff; 
+  background: #fff;
   border-radius: 17px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  width: 60rem; 
+  width: 60rem;
 `;
 
 const FormRow = styled.div`
@@ -217,8 +271,12 @@ const SelectField = styled.select`
   }
 `;
 
-const UploadButton = styled.button`
+const UploadWrapper = styled.div`
   flex: 1;
+`;
+
+const UploadButton = styled.button`
+  width: 100%;
   background: #f8f9fa;
   border-radius: 8px;
   border: 1px dashed #03045e;
@@ -264,7 +322,7 @@ const DescriptionField = styled.textarea`
 const SubmitButton = styled.button`
   max-width: 160px;
   align-self: center;
-  background: #0088FF;
+  background: #0088ff;
   color: #fff;
   font-family: 'Poppins', sans-serif;
   font-size: 1rem;

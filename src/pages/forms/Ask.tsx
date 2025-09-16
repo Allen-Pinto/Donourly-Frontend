@@ -10,6 +10,7 @@ const Ask = () => {
     email: "",
     itemType: "",
     quantity: "",
+    customQuantity: "",
     urgency: "",
     govtId: null as File | null,
     description: "",
@@ -22,7 +23,9 @@ const Ask = () => {
   };
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -86,6 +89,9 @@ const Ask = () => {
               <option value="Clothing">Clothing</option>
               <option value="Medicine">Medicine</option>
               <option value="Money">Money</option>
+              <option value="Books">Books</option>
+              <option value="Electronics">Electronics</option>
+              <option value="Furniture">Furniture</option>
               <option value="Other">Other</option>
             </SelectField>
 
@@ -102,8 +108,24 @@ const Ask = () => {
               <option value="5">5</option>
               <option value="10">10</option>
               <option value="20+">20+</option>
+              <option value="custom">Other (Specify)</option>
             </SelectField>
           </FormRow>
+
+          {/* Custom quantity input (only when "custom" is chosen) */}
+          {formData.quantity === "custom" && (
+            <FormRow>
+              <InputField
+                type="number"
+                name="customQuantity"
+                value={formData.customQuantity}
+                onChange={handleChange}
+                placeholder="Enter exact quantity"
+                min="1"
+                required
+              />
+            </FormRow>
+          )}
 
           {/* Row 3 */}
           <FormRow>
@@ -151,7 +173,7 @@ const Ask = () => {
   );
 };
 
-/* --- reuse your existing styled components (from Donour) --- */
+/* --- styled components unchanged --- */
 const TopBar = styled.div`
   display: flex;
   align-items: center;
@@ -248,7 +270,6 @@ const FormContainer = styled.form`
   display: flex;
   flex-direction: column;
   gap: 2rem;
-  background: hsla(208, 36%, 47%, 1);
   background: white;
   border-radius: 17px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
