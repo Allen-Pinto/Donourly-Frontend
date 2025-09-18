@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
-
 const StyledDonateButton = styled.button`
   font-family: 'Inter', sans-serif;
   font-weight: 600;
@@ -14,17 +13,17 @@ const StyledDonateButton = styled.button`
   cursor: pointer;
   transition: all 0.3s ease;
   color: white;
-  background: linear-gradient(135deg, #FDC726 0%, #F0B90B 100%);
+  background: linear-gradient(135deg, #0088FF 0%, #0066CC 100%);
   text-decoration: none;
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  box-shadow: 0 3px 10px rgba(253, 199, 38, 0.3);
+  box-shadow: 0 3px 10px rgba(0, 136, 255, 0.3);
   
   &:hover {
     transform: translateY(-2px) scale(1.02);
-    box-shadow: 0 6px 20px rgba(253, 199, 38, 0.4);
-    background: linear-gradient(135deg, #F0B90B 0%, #E6A800 100%);
+    box-shadow: 0 6px 20px rgba(0, 136, 255, 0.4);
+    background: linear-gradient(135deg, #0066CC 0%, #0052A3 100%);
   }
   
   &:disabled {
@@ -33,7 +32,6 @@ const StyledDonateButton = styled.button`
     transform: none;
   }
 `;
-
 
 const StyledActionButtonLink = styled(Link)`
   font-family: 'Inter', sans-serif;
@@ -328,40 +326,29 @@ const StyledWrapper = styled.div`
     line-height: 1.5;
   }
 
-.requests-card {
-  background: linear-gradient(135deg,
-    rgba(255, 255, 255, 0.95) 0%,
-    rgba(255, 255, 255, 0.85) 100%);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow:
-    0 20px 40px rgba(0, 136, 255, 0.15),
-    0 0 60px rgba(0, 136, 255, 0.05),
-    0 0 0 1px rgba(0, 136, 255, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3);
-  border-radius: 24px;
-  padding: 2.2rem;
-  height: 560px; 
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-.requests-feed {
-  flex: 1; 
-  overflow-y: auto; 
-  display: flow;
-  flex-direction: column;
-  gap: 1.5rem;
-  padding-right: 0.5rem;
-}
-
-
-  
+  .requests-card {
+    background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.95) 0%,
+      rgba(255, 255, 255, 0.85) 100%);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow:
+      0 20px 40px rgba(0, 136, 255, 0.15),
+      0 0 60px rgba(0, 136, 255, 0.05),
+      0 0 0 1px rgba(0, 136, 255, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    border-radius: 24px;
+    padding: 2.2rem;
+    height: 460px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
 
   .requests-header {
     text-align: center;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
+    flex-shrink: 0;
   }
 
   .requests-title {
@@ -384,7 +371,33 @@ const StyledWrapper = styled.div`
     line-height: 1.5;
   }
 
+  .requests-feed {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    overflow-y: auto;
+    flex: 1;
+    padding-right: 0.5rem;
+    margin-right: -0.5rem;
+  }
 
+  .requests-feed::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .requests-feed::-webkit-scrollbar-track {
+    background: rgba(0, 136, 255, 0.1);
+    border-radius: 3px;
+  }
+
+  .requests-feed::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #0088FF 0%, #0066CC 100%);
+    border-radius: 3px;
+  }
+
+  .requests-feed::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #0066CC 0%, #0052A3 100%);
+  }
 
   .request-item {
     background: rgba(255, 255, 255, 0.8);
@@ -392,7 +405,6 @@ const StyledWrapper = styled.div`
     border-radius: 16px;
     padding: 1.5rem;
     transition: all 0.3s ease;
-    cursor: pointer;
     position: relative;
     overflow: hidden;
 
@@ -431,10 +443,11 @@ const StyledWrapper = styled.div`
   .request-time {
     font-family: 'Inter', sans-serif;
     font-size: 0.75rem;
-    color: #999;
-    background: rgba(0, 136, 255, 0.1);
+    color: white;
+    background: linear-gradient(135deg, #0088FF 0%, #0066CC 100%);
     padding: 0.25rem 0.75rem;
     border-radius: 12px;
+    font-weight: 600;
   }
 
   .request-title {
@@ -446,18 +459,13 @@ const StyledWrapper = styled.div`
     line-height: 1.4;
   }
 
-.request-description {
-  font-family: 'Inter', sans-serif;
-  font-size: 0.85rem;
-  color: #666;
-  margin: 0 0 1rem 0;
-  line-height: 1.5;
-  display: block;
-  overflow: visible;
-  -webkit-line-clamp: unset;
-  -webkit-box-orient: unset;
-}
-
+  .request-description {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    color: #666;
+    margin: 0 0 1rem 0;
+    line-height: 1.5;
+  }
 
   .request-details {
     display: flex;
@@ -465,6 +473,7 @@ const StyledWrapper = styled.div`
     align-items: center;
     flex-wrap: wrap;
     gap: 0.5rem;
+    margin-bottom: 1rem;
   }
 
   .request-category {
@@ -498,6 +507,11 @@ const StyledWrapper = styled.div`
     }
   }
 
+  .request-actions {
+    display: flex;
+    justify-content: flex-end;
+  }
+
   .view-all-btn {
     margin-top: 1rem;
     text-align: center;
@@ -517,6 +531,8 @@ const StyledWrapper = styled.div`
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
+    background: none;
+    cursor: pointer;
 
     &:hover {
       background: rgba(0, 136, 255, 0.1);
@@ -739,7 +755,7 @@ const Options = () => {
           <div className="content-container">
             {/* Make Donation Section */}
             <motion.div 
-              className="receiver-section"
+              className="donor-section"
               initial={{ opacity: 0, x: -100 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
@@ -800,19 +816,19 @@ const Options = () => {
 
             {/* Active Requirements Section */}
             <motion.div 
-              className="donations-section"
+              className="requests-section"
               initial={{ opacity: 0, x: 100 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: 0.4 }}
             >
-              <div className="donations-card">
-                <div className="donations-header">
-                  <h2 className="donations-title">Help Requests</h2>
-                  <p className="donations-subtitle">People in your community who need your support</p>
+              <div className="requests-card">
+                <div className="requests-header">
+                  <h2 className="requests-title">Help Requests</h2>
+                  <p className="requests-subtitle">People in your community who need your support</p>
                 </div>
 
-                <div className="donations-feed">
+                <div className="requests-feed">
                   {loading ? (
                     <div style={{ textAlign: 'center', padding: '2rem' }}>
                       <p>Loading requests...</p>
@@ -830,17 +846,17 @@ const Options = () => {
                     requirements.map((requirement: any, index) => (
                       <motion.div
                         key={requirement._id}
-                        className="donation-item"
+                        className="request-item"
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.4, delay: 0.6 + (index * 0.1) }}
                         whileHover={{ scale: 1.02 }}
                       >
-                        <div className="donation-header">
-                          <p className="donation-donor">{requirement.receiverName}</p>
+                        <div className="request-header">
+                          <p className="request-org">{requirement.receiverName}</p>
                           <span 
-                            className="donation-amount"
+                            className="request-time"
                             style={{ 
                               background: formatUrgency(requirement.urgency).color,
                               color: 'white'
@@ -850,19 +866,19 @@ const Options = () => {
                           </span>
                         </div>
                         
-                        <h3 className="donation-title">
+                        <h3 className="request-title">
                           {requirement.itemType} - Qty: {formatQuantity(requirement.quantity, requirement.customQuantity)}
                         </h3>
-                        <p className="donation-description">{requirement.description}</p>
+                        <p className="request-description">{requirement.description}</p>
                         
-                        <div className="donation-details">
-                          <span className="donation-category">{requirement.itemType}</span>
-                          <span className="donation-location">
+                        <div className="request-details">
+                          <span className="request-category">{requirement.itemType}</span>
+                          <span className="request-urgency low">
                             {new Date(requirement.createdAt).toLocaleDateString()}
                           </span>
                         </div>
 
-                        <div className="donation-actions">
+                        <div className="request-actions">
                           <StyledDonateButton
                             onClick={() => handleDonateNow(requirement._id, {
                               receiverName: requirement.receiverName,
