@@ -342,7 +342,7 @@ const StyledWrapper = styled.div`
     height: 460px;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    overflow: auto;
   }
 
   .requests-header {
