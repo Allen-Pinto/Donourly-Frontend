@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { Carousel } from 'react-responsive-carousel';
@@ -9,12 +9,46 @@ interface Props {}
 
 const Home: React.FC<Props> = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [imagesLoaded, setImagesLoaded] = useState(false);
 
   // Parallax scroll effects
   const { scrollYProgress } = useScroll();
   const heroY = useTransform(scrollYProgress, [0, 1], [0, -200]);
   const carouselY = useTransform(scrollYProgress, [0, 1], [0, -100]);
   const yellowCircleY = useTransform(scrollYProgress, [0, 1], [0, -300]);
+
+  // Preload images to fix carousel sizing issue
+  useEffect(() => {
+    const imageUrls = [
+      "assets/Carousel/1.jpg",
+      "assets/Carousel/2.jpg", 
+      "assets/Carousel/3.jpg",
+      "assets/Carousel/4.jpg",
+      "assets/Carousel/5.jpg"
+    ];
+
+    const preloadImages = async () => {
+      const imagePromises = imageUrls.map(url => {
+        return new Promise((resolve, reject) => {
+          const img = new Image();
+          img.onload = resolve;
+          img.onerror = reject;
+          img.src = url;
+        });
+      });
+
+      try {
+        await Promise.all(imagePromises);
+        setImagesLoaded(true);
+      } catch (error) {
+        console.error('Error preloading images:', error);
+        // Set to true anyway to show carousel
+        setImagesLoaded(true);
+      }
+    };
+
+    preloadImages();
+  }, []);
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -37,31 +71,61 @@ const Home: React.FC<Props> = () => {
     <Container>
       <HeroSection as={motion.section} style={{ y: heroY }}>
         
-        {/* ✅ Fixed Carousel */}
-        <CarouselWrapper as={motion.div} style={{ y: carouselY }}>
-          <Carousel
-            autoPlay
-            infiniteLoop
-            showThumbs={false}
-            showStatus={false}
-            showArrows={true}
-          >
-            <div>
-              <CarouselImage src="assets/Carousel/1.jpg" alt="Carousel Image 1" />
-            </div>
-            <div>
-              <CarouselImage src="assets/Carousel/2.jpg" alt="Carousel Image 2" />
-            </div>
-            <div>
-              <CarouselImage src="assets/Carousel/3.jpg" alt="Carousel Image 3" />
-            </div>
-            <div>
-              <CarouselImage src="assets/Carousel/4.jpg" alt="Carousel Image 4" />
-            </div>
-            <div>
-              <CarouselImage src="assets/Carousel/5.jpg" alt="Carousel Image 5" />
-            </div>
-          </Carousel>
+        {/* Fixed Carousel with proper loading */}
+        <CarouselWrapper as={motion.div} style={{ y: carouselY }} $loaded={imagesLoaded}>
+          {imagesLoaded ? (
+            <Carousel
+              autoPlay
+              infiniteLoop
+              showThumbs={false}
+              showStatus={false}
+              showArrows={true}
+              interval={5000}
+              transitionTime={500}
+              swipeable={false}
+              emulateTouch={false}
+            >
+              <div>
+                <CarouselImage 
+                  src="assets/Carousel/1.jpg" 
+                  alt="Carousel Image 1"
+                  onLoad={() => {}} // Prevent individual image load events
+                />
+              </div>
+              <div>
+                <CarouselImage 
+                  src="assets/Carousel/2.jpg" 
+                  alt="Carousel Image 2"
+                  onLoad={() => {}}
+                />
+              </div>
+              <div>
+                <CarouselImage 
+                  src="assets/Carousel/3.jpg" 
+                  alt="Carousel Image 3"
+                  onLoad={() => {}}
+                />
+              </div>
+              <div>
+                <CarouselImage 
+                  src="assets/Carousel/4.jpg" 
+                  alt="Carousel Image 4"
+                  onLoad={() => {}}
+                />
+              </div>
+              <div>
+                <CarouselImage 
+                  src="assets/Carousel/5.jpg" 
+                  alt="Carousel Image 5"
+                  onLoad={() => {}}
+                />
+              </div>
+            </Carousel>
+          ) : (
+            <LoadingPlaceholder>
+              <div>Loading...</div>
+            </LoadingPlaceholder>
+          )}
         </CarouselWrapper>
 
         <HeroContent
@@ -72,23 +136,21 @@ const Home: React.FC<Props> = () => {
         >
           <HeroTitle>Every child deserves education, safety and dignity and you can help</HeroTitle>
           <HeroStats>4,500+ children die annually in India from waterborne diseases</HeroStats>
-      <HeroButtons>
-        <HeroButton
-          $primary
-          onClick={() => {
-            const element = document.getElementById("options");
-            if (element) {
-              element.scrollIntoView({ behavior: "smooth" });
-              // Update URL fragment
-              window.history.replaceState(null, "", "/#options");
-            }
-          }}
-        >
-          DONATE NOW
-        </HeroButton>
-        <HeroButton onClick={handleOpenModal}>HELP PEOPLE</HeroButton>
-      </HeroButtons>
-
+          <HeroButtons>
+            <HeroButton
+              $primary
+              onClick={() => {
+                const element = document.getElementById("options");
+                if (element) {
+                  element.scrollIntoView({ behavior: "smooth" });
+                  window.history.replaceState(null, "", "/#options");
+                }
+              }}
+            >
+              DONATE NOW
+            </HeroButton>
+            <HeroButton onClick={handleOpenModal}>HELP PEOPLE</HeroButton>
+          </HeroButtons>
         </HeroContent>
 
         <YellowCircleImage 
@@ -102,7 +164,7 @@ const Home: React.FC<Props> = () => {
         />
       </HeroSection>
 
-      {/* ✅ Categories */}
+      {/* Categories */}
       <ContentSection
         as={motion.section}
         initial={{ opacity: 0, y: 100 }}
@@ -134,7 +196,7 @@ const Home: React.FC<Props> = () => {
         </CategoryGrid>
       </ContentSection>
 
-      {/* ✅ Modal */}
+      {/* Modal */}
       {isModalOpen && (
         <ModalOverlay
           as={motion.div}
@@ -162,7 +224,7 @@ const Home: React.FC<Props> = () => {
   );
 };
 
-// ✅ Styled Components - REMOVED BACKGROUND MAP
+// Styled Components
 
 const Container = styled.div`
   display: flex;
@@ -186,30 +248,71 @@ const HeroSection = styled.section`
   text-align: left;
 `;
 
-/* ✅ Fixed Carousel */
-const CarouselWrapper = styled.div`
+const LoadingPlaceholder = styled.div`
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 60vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(45deg, #f0f0f0 25%, transparent 25%), 
+              linear-gradient(-45deg, #f0f0f0 25%, transparent 25%), 
+              linear-gradient(45deg, transparent 75%, #f0f0f0 75%), 
+              linear-gradient(-45deg, transparent 75%, #f0f0f0 75%);
+  background-size: 20px 20px;
+  background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+  
+  div {
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 20px 40px;
+    border-radius: 10px;
+    font-size: 18px;
+    font-weight: 500;
+  }
+`;
 
-  .carousel-root,
-  .carousel {
+/* Fixed Carousel */
+const CarouselWrapper = styled.div<{ $loaded: boolean }>`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 60vh;
+  opacity: ${props => props.$loaded ? 1 : 0};
+  transition: opacity 0.5s ease;
+
+  .carousel-root {
     width: 100%;
     height: 100%;
+    position: relative;
+    
+    .carousel {
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
   }
 
   .slide {
-    height: 100%;
+    height: 60vh !important;
     position: relative;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
   }
 
   .slide img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center; /* change to top / bottom as needed */
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    object-position: center !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
   }
 
   /* Dark overlay */
@@ -220,14 +323,36 @@ const CarouselWrapper = styled.div`
     background-color: rgba(0, 0, 0, 0.65);
     z-index: 2;
   }
-`;
 
+  /* Fix carousel controls */
+  .carousel .control-arrow {
+    z-index: 10;
+  }
+
+  .carousel .carousel-status {
+    z-index: 10;
+  }
+
+  /* Ensure proper sizing on load */
+  .carousel-slider {
+    height: 100% !important;
+  }
+
+  .slider-wrapper {
+    height: 100% !important;
+  }
+
+  .slider {
+    height: 100% !important;
+  }
+`;
 
 const CarouselImage = styled.img`
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: bottom;
+  object-position: center;
+  display: block;
 `;
 
 const HeroContent = styled.div`
@@ -342,7 +467,7 @@ const CategoryDescription = styled.p`
   line-height: 1.5;
 `;
 
-/* ✅ Modal */
+/* Modal */
 const ModalOverlay = styled.div`
   position: fixed;
   top: 0;
@@ -381,12 +506,6 @@ const CloseButton = styled.button`
   font-weight: 300;
   color: white;
   cursor: pointer;
-`;
-
-const ModalTitle = styled.h3`
-  font-size: 2.5rem;
-  font-weight: 700;
-  margin-bottom: 1.5rem;
 `;
 
 const ModalText = styled.p`
