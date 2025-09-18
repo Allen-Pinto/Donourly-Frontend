@@ -1,8 +1,273 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
+// Custom button component for "Receive Now"
+const StyledReceiveButton = styled.button`
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: white;
+  background: linear-gradient(135deg, #FDC726 0%, #F0B90B 100%);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  box-shadow: 0 3px 10px rgba(253, 199, 38, 0.3);
+  
+  &:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 6px 20px rgba(253, 199, 38, 0.4);
+    background: linear-gradient(135deg, #F0B90B 0%, #E6A800 100%);
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+`;
+
+const Options2 = () => {
+  const { scrollYProgress } = useScroll();
+  const backgroundY = useTransform(scrollYProgress, [0, 1], [0, -100]);
+  const cardsY = useTransform(scrollYProgress, [0, 1], [0, -50]);
+  
+  // State for real donations data
+  const [donations, setDonations] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  
+  const navigate = useNavigate();
+
+  // Fetch donations from API
+  useEffect(() => {
+    fetchDonations();
+  }, []);
+
+  const fetchDonations = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('https://donourly-backend.onrender.com/api/donations');
+      const result = await response.json();
+      
+      if (result.success) {
+        setDonations(result.data);
+      } else {
+        setError('Failed to load donations');
+      }
+    } catch (error) {
+      console.error('Error fetching donations:', error);
+      setError('Failed to load donations');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleReceiveNow = async (donationId: string) => {
+    try {
+      // First reserve the donation
+      const response = await fetch(`https://donourly-backend.onrender.com/api/donations/${donationId}/reserve`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        // Navigate to receiver form with donation ID
+        navigate('/receiver', { state: { donationId } });
+      } else {
+        alert(`Error: ${result.message}`);
+      }
+    } catch (error) {
+      console.error('Error reserving donation:', error);
+      alert('Failed to reserve donation. Please try again.');
+    }
+  };
+
+  const formatItemType = (itemType: string, customItem?: string) => {
+    if (itemType === 'other' && customItem) {
+      return customItem;
+    }
+    return itemType.charAt(0).toUpperCase() + itemType.slice(1);
+  };
+
+  return (
+    <>
+      <StyledWrapper>
+        <ParallaxBackground as={motion.div} style={{ y: backgroundY }} />
+        
+        <motion.div 
+          className="container"
+          style={{ y: cardsY }}
+        >
+          <motion.div 
+            className="section-header"
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+          >
+            <h1 className="main-title">Receiver Dashboard</h1>
+            <p className="main-subtitle">Connect with generous donors and access the support you need</p>
+          </motion.div>
+
+          <div className="content-container">
+            {/* Post Requirement Section */}
+            <motion.div 
+              className="receiver-section"
+              initial={{ opacity: 0, x: -100 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+            >
+              <div className="flip-card">
+                <div className="flip-card-inner">
+                  <div className="flip-card-front">
+                    <div className="card-icon"></div>
+                    <h2 className="card-heading">POST A REQUIREMENT</h2>
+                    <p className="card-subtitle">Share your needs and connect with generous hearts.</p>
+                    <div className="features">
+                      {[
+                        "Post specific requirements",
+                        "Connect with willing donors",
+                        "Share your story publicly", 
+                        "Track request responses"
+                      ].map((text, index) => (
+                        <motion.div 
+                          key={index}
+                          className="feature-item"
+                          initial={{ opacity: 0, x: -20 }}
+                          whileInView={{ opacity: 1, x: 0 }}
+                          viewport={{ once: true }}
+                          transition={{ duration: 0.4, delay: 0.4 + (index * 0.1) }}
+                        >
+                          <span className="checkmark">✓</span>
+                          <span className="feature-text">{text}</span>
+                        </motion.div>
+                      ))}
+                    </div>
+                    <div className="card-footer">
+                      <div className="hover-indicator">Hover to join →</div>
+                    </div>
+                  </div>
+                  <div className="flip-card-back">
+                    <div className="back-content">
+                      <motion.div 
+                        className="back-icon"
+                        animate={{ y: [0, -10, 0] }}
+                        transition={{ duration: 2, repeat: Infinity }}
+                      >
+                        💬
+                      </motion.div>
+                      <h2 className="back-heading">Need Something?</h2>
+                      <p className="back-description">Post your request and let the community help you</p>
+                      <Link to="/ask" style={{ textDecoration: 'none' }}>
+                        <StyledReceiveButton>
+                          <span className="button-text">Post Request</span>
+                          <span className="button-icon">→</span>
+                        </StyledReceiveButton>
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Available Donations Section */}
+            <motion.div 
+              className="donations-section"
+              initial={{ opacity: 0, x: 100 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+            >
+              <div className="donations-card">
+                <div className="donations-header">
+                  <h2 className="donations-title">Available Donations</h2>
+                  <p className="donations-subtitle">Support offered by generous donors in your community</p>
+                </div>
+
+                <div className="donations-feed">
+                  {loading ? (
+                    <div style={{ textAlign: 'center', padding: '2rem' }}>
+                      <p>Loading donations...</p>
+                    </div>
+                  ) : error ? (
+                    <div style={{ textAlign: 'center', padding: '2rem', color: 'red' }}>
+                      <p>{error}</p>
+                      <button onClick={fetchDonations}>Retry</button>
+                    </div>
+                  ) : donations.length === 0 ? (
+                    <div style={{ textAlign: 'center', padding: '2rem' }}>
+                      <p>No donations available at the moment.</p>
+                    </div>
+                  ) : (
+                    donations.map((donation: any, index) => (
+                      <motion.div
+                        key={donation._id}
+                        className="donation-item"
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.4, delay: 0.6 + (index * 0.1) }}
+                        whileHover={{ scale: 1.02 }}
+                      >
+                        <div className="donation-header">
+                          <p className="donation-donor">{donation.donorName}</p>
+                          <span className="donation-amount">
+                            {donation.itemCondition}
+                          </span>
+                        </div>
+                        
+                        <h3 className="donation-title">
+                          {formatItemType(donation.itemType, donation.customItem)}
+                        </h3>
+                        <p className="donation-description">{donation.description}</p>
+                        
+                        <div className="donation-details">
+                          <span className="donation-category">{donation.conditionStatus}</span>
+                          <span className="donation-location">Available</span>
+                        </div>
+
+                        <div className="donation-actions">
+                          <StyledReceiveButton
+                            onClick={() => handleReceiveNow(donation._id)}
+                          >
+                            <span>Receive Now</span>
+                            <span className="button-icon">→</span>
+                          </StyledReceiveButton>
+                        </div>
+                      </motion.div>
+                    ))
+                  )}
+                </div>
+
+                <div className="view-all-btn">
+                  <button onClick={fetchDonations} className="view-all-link">
+                    <span>Refresh Donations</span>
+                    <span>↻</span>
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </motion.div>
+      </StyledWrapper>
+    </>
+  );
+};
+
+// Keep all existing styled components...
 const StyledActionButtonLink = styled(Link)`
   font-family: 'Inter', sans-serif;
   font-weight: 600;
@@ -33,38 +298,6 @@ const StyledActionButtonLink = styled(Link)`
   
   &:hover .button-icon {
     transform: translateX(5px);
-  }
-`;
-
-const StyledReceiveButton = styled(Link)`
-  font-family: 'Inter', sans-serif;
-  font-weight: 600;
-  font-size: 0.85rem;
-  padding: 0.6rem 1.2rem;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  color: white;
-  background: linear-gradient(135deg, #FDC726 0%, #F0B90B 100%);
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  box-shadow: 0 3px 10px rgba(253, 199, 38, 0.3);
-  
-  &:hover {
-    transform: translateY(-2px) scale(1.02);
-    box-shadow: 0 6px 20px rgba(253, 199, 38, 0.4);
-    background: linear-gradient(135deg, #F0B90B 0%, #E6A800 100%);
-  }
-  
-  .button-icon {
-    transition: transform 0.3s ease;
-  }
-  
-  &:hover .button-icon {
-    transform: translateX(3px);
   }
 `;
 
@@ -374,7 +607,7 @@ const StyledWrapper = styled.div`
   }
 
   .donations-feed {
-    display: flow;
+    display: flex;
     flex-direction: column;
     gap: 1.2rem;
     overflow-y: auto;
@@ -520,113 +753,13 @@ const StyledWrapper = styled.div`
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
+    background: none;
+    cursor: pointer;
 
     &:hover {
       background: rgba(253, 199, 38, 0.1);
       border-color: #FDC726;
       transform: translateY(-1px);
-    }
-  }
-
-  /* Responsive Design */
-  @media (max-width: 1200px) {
-    .content-container {
-      gap: 2rem;
-    }
-  }
-
-  @media (max-width: 1024px) {
-    .content-container {
-      gap: 1.5rem;
-    }
-    
-    .main-title {
-      font-size: 3rem;
-    }
-  }
-
-  @media (max-width: 768px) {
-    .container {
-      padding: 2rem 1rem;
-    }
-    
-    .content-container {
-      flex-direction: column;
-      gap: 2rem;
-      align-items: center;
-    }
-
-    .receiver-section,
-    .donations-section {
-      width: 100%;
-      max-width: 400px;
-    }
-    
-    .main-title {
-      font-size: 2.5rem;
-    }
-    
-    .main-subtitle {
-      font-size: 1rem;
-    }
-    
-    .card-heading,
-    .donations-title {
-      font-size: 1.6rem;
-    }
-    
-    .card-subtitle,
-    .donations-subtitle {
-      font-size: 0.9rem;
-    }
-    
-    .feature-text {
-      font-size: 0.85rem;
-    }
-  }
-
-  @media (max-width: 480px) {
-    .container {
-      padding: 1.5rem 1rem;
-    }
-
-    .receiver-section,
-    .donations-section {
-      max-width: 320px;
-    }
-    
-    .flip-card-front,
-    .flip-card-back,
-    .donations-card {
-      padding: 1.8rem;
-    }
-    
-    .main-title {
-      font-size: 2rem;
-    }
-    
-    .card-heading,
-    .donations-title {
-      font-size: 1.4rem;
-    }
-    
-    .card-subtitle,
-    .donations-subtitle {
-      font-size: 0.85rem;
-    }
-    
-    .feature-text {
-      font-size: 0.8rem;
-    }
-
-    .donation-header {
-      flex-direction: column;
-      gap: 0.5rem;
-      align-items: flex-start;
-    }
-
-    .donation-actions {
-      justify-content: center;
     }
   }
 `;
@@ -644,202 +777,5 @@ const ParallaxBackground = styled.div`
   z-index: -1;
   will-change: transform;
 `;
-
-const Options2 = () => {
-  const { scrollYProgress } = useScroll();
-  const backgroundY = useTransform(scrollYProgress, [0, 1], [0, -100]);
-  const cardsY = useTransform(scrollYProgress, [0, 1], [0, -50]);
-
-  // Dummy donation data
-  const dummyDonations = [
-    {
-      id: 1,
-      donor: "Anonymous Donor",
-      title: "Educational Support Package",
-      description: "Complete educational materials including textbooks, notebooks, and stationery for students in need.",
-      category: "Education",
-      amount: "₹15,000",
-      location: "Mumbai"
-    },
-    {
-      id: 2,
-      donor: "TechCorp Foundation",
-      title: "Laptop for Digital Learning",
-      description: "Refurbished laptop with educational software installed, perfect for online learning and skill development.",
-      category: "Technology",
-      amount: "₹25,000",
-      location: "Bangalore"
-    },
-    {
-      id: 3,
-      donor: "Green Valley NGO",
-      title: "Monthly Food Rations",
-      description: "Essential food items including rice, dal, oil, and vegetables for a family of 4 for one month.",
-      category: "Food",
-      amount: "₹5,000",
-      location: "Delhi"
-    },
-    {
-      id: 4,
-      donor: "Healthcare Heroes",
-      title: "Medical Treatment Fund",
-      description: "Financial assistance for medical treatment, including consultation fees and basic medications.",
-      category: "Healthcare",
-      amount: "₹30,000",
-      location: "Chennai"
-    },
-    {
-      id: 5,
-      donor: "Community Kitchen",
-      title: "Skill Training Workshop",
-      description: "Free vocational training in tailoring, cooking, or computer basics with certification.",
-      category: "Skills",
-      amount: "₹8,000",
-      location: "Pune"
-    }
-  ];
-
-  return (
-    <>
-      <StyledWrapper>
-        <ParallaxBackground as={motion.div} style={{ y: backgroundY }} />
-        
-        <motion.div 
-          className="container"
-          style={{ y: cardsY }}
-        >
-          <motion.div 
-            className="section-header"
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-          >
-            <h1 className="main-title">Receiver Dashboard</h1>
-            <p className="main-subtitle">Connect with generous donors and access the support you need</p>
-          </motion.div>
-
-          <div className="content-container">
-            {/* Post Requirement Section */}
-            <motion.div 
-              className="receiver-section"
-              initial={{ opacity: 0, x: -100 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-            >
-              <div className="flip-card">
-                <div className="flip-card-inner">
-                  <div className="flip-card-front">
-                    <div className="card-icon"></div>
-                    <h2 className="card-heading">POST A REQUIREMENT</h2>
-                    <p className="card-subtitle">Share your needs and connect with generous hearts.</p>
-                    <div className="features">
-                      {[
-                        "Post specific requirements",
-                        "Connect with willing donors",
-                        "Share your story publicly", 
-                        "Track request responses"
-                      ].map((text, index) => (
-                        <motion.div 
-                          key={index}
-                          className="feature-item"
-                          initial={{ opacity: 0, x: -20 }}
-                          whileInView={{ opacity: 1, x: 0 }}
-                          viewport={{ once: true }}
-                          transition={{ duration: 0.4, delay: 0.4 + (index * 0.1) }}
-                        >
-                          <span className="checkmark">✓</span>
-                          <span className="feature-text">{text}</span>
-                        </motion.div>
-                      ))}
-                    </div>
-                    <div className="card-footer">
-                      <div className="hover-indicator">Hover to join →</div>
-                    </div>
-                  </div>
-                  <div className="flip-card-back">
-                    <div className="back-content">
-                      <motion.div 
-                        className="back-icon"
-                        animate={{ y: [0, -10, 0] }}
-                        transition={{ duration: 2, repeat: Infinity }}
-                      >
-                        💬
-                      </motion.div>
-                      <h2 className="back-heading">Need Something?</h2>
-                      <p className="back-description">Post your request and let the community help you</p>
-                      <StyledActionButtonLink to="/ask">
-                        <span className="button-text">Post Request</span>
-                        <span className="button-icon">→</span>
-                      </StyledActionButtonLink>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Available Donations Section */}
-            <motion.div 
-              className="donations-section"
-              initial={{ opacity: 0, x: 100 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-            >
-              <div className="donations-card">
-                <div className="donations-header">
-                  <h2 className="donations-title">Available Donations</h2>
-                  <p className="donations-subtitle">Support offered by generous donors in your community</p>
-                </div>
-
-                <div className="donations-feed">
-                  {dummyDonations.map((donation, index) => (
-                    <motion.div
-                      key={donation.id}
-                      className="donation-item"
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.4, delay: 0.6 + (index * 0.1) }}
-                      whileHover={{ scale: 1.02 }}
-                    >
-                      <div className="donation-header">
-                        <p className="donation-donor">{donation.donor}</p>
-                        <span className="donation-amount">{donation.amount}</span>
-                      </div>
-                      
-                      <h3 className="donation-title">{donation.title}</h3>
-                      <p className="donation-description">{donation.description}</p>
-                      
-                      <div className="donation-details">
-                        <span className="donation-category">{donation.category}</span>
-                        <span className="donation-location">{donation.location}</span>
-                      </div>
-
-                      <div className="donation-actions">
-                        <StyledReceiveButton to="/receiver">
-                          <span>Receive Now</span>
-                          <span className="button-icon">→</span>
-                        </StyledReceiveButton>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-
-                <div className="view-all-btn">
-                  <Link to="/donations" className="view-all-link">
-                    <span>View All Donations</span>
-                    <span>→</span>
-                  </Link>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        </motion.div>
-      </StyledWrapper>
-    </>
-  );
-};
 
 export default Options2;

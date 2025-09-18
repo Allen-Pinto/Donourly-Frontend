@@ -5,25 +5,111 @@ import Navbar2 from '../../components/Navbar2';
 
 const Donour = () => {
   const [activeButton, setActiveButton] = useState('donour');
-  const [selectedItem, setSelectedItem] = useState('');
-  const [otherItem, setOtherItem] = useState('');
+  const [formData, setFormData] = useState({
+    donorName: '',
+    donorEmail: '',
+    itemType: '',
+    customItem: '',
+    itemCondition: '',
+    conditionStatus: '',
+    description: ''
+  });
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
   const handleBackClick = () => {
     navigate('/#options');
   };
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
   const handleItemChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedItem(e.target.value);
-    if (e.target.value !== 'other') {
-      setOtherItem('');
-    }
+    const value = e.target.value;
+    setFormData(prev => ({
+      ...prev,
+      itemType: value,
+      customItem: value !== 'other' ? '' : prev.customItem
+    }));
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setSelectedFile(e.target.files[0]);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Validation
+    if (!formData.donorName || !formData.donorEmail || !formData.itemType || 
+        !formData.itemCondition || !formData.conditionStatus || !formData.description) {
+      alert('Please fill all required fields');
+      return;
+    }
+
+    if (formData.itemType === 'other' && !formData.customItem) {
+      alert('Please specify the custom item');
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      // In a real app, you'd upload the image first and get a URL
+      // For now, we'll use a placeholder or the file name
+      const imageUrl = selectedFile ? `uploads/${selectedFile.name}` : null;
+
+      const donationData = {
+        donorName: formData.donorName,
+        donorEmail: formData.donorEmail,
+        itemType: formData.itemType,
+        customItem: formData.itemType === 'other' ? formData.customItem : undefined,
+        itemCondition: formData.itemCondition,
+        conditionStatus: formData.conditionStatus,
+        description: formData.description,
+        imageUrl: imageUrl
+      };
+
+      const response = await fetch('https://donourly-backend.onrender.com/api/donations', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(donationData)
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        alert('Donation posted successfully! It will now appear in the receivers feed.');
+        // Reset form
+        setFormData({
+          donorName: '',
+          donorEmail: '',
+          itemType: '',
+          customItem: '',
+          itemCondition: '',
+          conditionStatus: '',
+          description: ''
+        });
+        setSelectedFile(null);
+        navigate('/#options');
+      } else {
+        alert(`Error: ${result.message}`);
+      }
+    } catch (error) {
+      console.error('Error submitting donation:', error);
+      alert('Failed to submit donation. Please try again.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -36,14 +122,33 @@ const Donour = () => {
         </BackButton>
       </TopBar>
       <StyledWrapper>
-        <FormContainer>
+        <FormContainer onSubmit={handleSubmit}>
           <FormRow>
-            <InputField type="text" placeholder="Enter your Name" />
-            <InputField type="email" placeholder="Enter your E-Mail" />
+            <InputField 
+              type="text" 
+              name="donorName"
+              value={formData.donorName}
+              onChange={handleInputChange}
+              placeholder="Enter your Name" 
+              required
+            />
+            <InputField 
+              type="email" 
+              name="donorEmail"
+              value={formData.donorEmail}
+              onChange={handleInputChange}
+              placeholder="Enter your E-Mail" 
+              required
+            />
           </FormRow>
 
           <FormRow>
-            <SelectField defaultValue="" onChange={handleItemChange}>
+            <SelectField 
+              name="itemType"
+              value={formData.itemType} 
+              onChange={handleItemChange}
+              required
+            >
               <option value="" disabled>
                 Type of Item
               </option>
@@ -61,7 +166,12 @@ const Donour = () => {
               <option value="other">Other</option>
             </SelectField>
 
-            <SelectField defaultValue="">
+            <SelectField 
+              name="itemCondition"
+              value={formData.itemCondition}
+              onChange={handleInputChange}
+              required
+            >
               <option value="" disabled>
                 Item Condition
               </option>
@@ -71,19 +181,26 @@ const Donour = () => {
             </SelectField>
           </FormRow>
 
-          {selectedItem === 'other' && (
+          {formData.itemType === 'other' && (
             <FormRow>
               <InputField
                 type="text"
+                name="customItem"
                 placeholder="Please specify the item"
-                value={otherItem}
-                onChange={(e) => setOtherItem(e.target.value)}
+                value={formData.customItem}
+                onChange={handleInputChange}
+                required
               />
             </FormRow>
           )}
 
           <FormRow>
-            <SelectField defaultValue="">
+            <SelectField 
+              name="conditionStatus"
+              value={formData.conditionStatus}
+              onChange={handleInputChange}
+              required
+            >
               <option value="" disabled>
                 Condition Status
               </option>
@@ -112,8 +229,16 @@ const Donour = () => {
             </UploadWrapper>
           </FormRow>
 
-          <DescriptionField placeholder="Briefly describe the item, its purpose, or any notes" />
-          <SubmitButton>SUBMIT</SubmitButton>
+          <DescriptionField 
+            name="description"
+            value={formData.description}
+            onChange={handleInputChange}
+            placeholder="Briefly describe the item, its purpose, or any notes" 
+            required
+          />
+          <SubmitButton type="submit" disabled={isSubmitting}>
+            {isSubmitting ? 'SUBMITTING...' : 'SUBMIT'}
+          </SubmitButton>
         </FormContainer>
       </StyledWrapper>
     </>

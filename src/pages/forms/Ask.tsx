@@ -6,8 +6,8 @@ import Navbar2 from "../../components/Navbar2";
 const Ask = () => {
   const [activeButton, setActiveButton] = useState("ask");
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
+    receiverName: "",
+    receiverEmail: "",
     itemType: "",
     quantity: "",
     customQuantity: "",
@@ -15,6 +15,7 @@ const Ask = () => {
     govtId: null as File | null,
     description: "",
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const navigate = useNavigate();
 
@@ -37,10 +38,72 @@ const Ask = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Ask Form Data:", formData);
-    alert("Form submitted! Check console for data.");
+    
+    // Validation
+    if (!formData.receiverName || !formData.receiverEmail || !formData.itemType || 
+        !formData.quantity || !formData.urgency || !formData.description || !formData.govtId) {
+      alert('Please fill all required fields');
+      return;
+    }
+
+    if (formData.quantity === 'custom' && !formData.customQuantity) {
+      alert('Please specify the custom quantity');
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      // In a real app, you'd upload the government ID first and get a URL
+      // For now, we'll use a placeholder
+      const govtIdUrl = formData.govtId ? `uploads/govt-ids/${formData.govtId.name}` : '';
+
+      const requirementData = {
+        receiverName: formData.receiverName,
+        receiverEmail: formData.receiverEmail,
+        itemType: formData.itemType,
+        quantity: formData.quantity,
+        customQuantity: formData.quantity === 'custom' ? parseInt(formData.customQuantity) : undefined,
+        urgency: formData.urgency,
+        description: formData.description,
+        govtIdUrl: govtIdUrl
+      };
+
+      const response = await fetch('https://donourly-backend.onrender.com/api/requirements', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requirementData)
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        alert('Requirement posted successfully! It will now appear in the donors feed.');
+        // Reset form
+        setFormData({
+          receiverName: "",
+          receiverEmail: "",
+          itemType: "",
+          quantity: "",
+          customQuantity: "",
+          urgency: "",
+          govtId: null,
+          description: "",
+        });
+        navigate('/#options');
+      } else {
+        alert(`Error: ${result.message}`);
+      }
+    } catch (error) {
+      console.error('Error submitting requirement:', error);
+      alert('Failed to submit requirement. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -58,16 +121,16 @@ const Ask = () => {
           <FormRow>
             <InputField
               type="text"
-              name="name"
-              value={formData.name}
+              name="receiverName"
+              value={formData.receiverName}
               onChange={handleChange}
               placeholder="Enter your Name"
               required
             />
             <InputField
               type="email"
-              name="email"
-              value={formData.email}
+              name="receiverEmail"
+              value={formData.receiverEmail}
               onChange={handleChange}
               placeholder="Enter your E-Mail"
               required
@@ -166,7 +229,9 @@ const Ask = () => {
             required
           />
 
-          <SubmitButton type="submit">SUBMIT</SubmitButton>
+          <SubmitButton type="submit" disabled={isSubmitting}>
+            {isSubmitting ? 'SUBMITTING...' : 'SUBMIT'}
+          </SubmitButton>
         </FormContainer>
       </StyledWrapper>
     </>

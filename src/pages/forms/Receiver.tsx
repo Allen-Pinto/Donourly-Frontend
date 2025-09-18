@@ -1,15 +1,118 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Navbar2 from '../../components/Navbar2';
 
 const Receiver = () => {
   const [activeButton, setActiveButton] = useState('receiver');
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    location: '',
+    stateCity: '',
+    address: '',
+    whoAreYou: '',
+    atgForm: null as File | null,
+    description: ''
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
   const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Get donation ID from navigation state (passed when "Receive Now" is clicked)
+  const donationId = location.state?.donationId;
 
   const handleBackClick = () => {
     navigate('/#options');
   };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setFormData(prev => ({
+        ...prev,
+        atgForm: e.target.files![0]
+      }));
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!donationId) {
+      alert('No donation selected. Please go back and select a donation first.');
+      return;
+    }
+
+    // Validation
+    if (!formData.name || !formData.email || !formData.location || !formData.stateCity || 
+        !formData.address || !formData.whoAreYou || !formData.atgForm || !formData.description) {
+      alert('Please fill all required fields');
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      // In a real app, you'd upload the ATG form first and get a URL
+      const atgFormUrl = formData.atgForm ? `uploads/atg-forms/${formData.atgForm.name}` : '';
+
+      const receiverData = {
+        name: formData.name,
+        email: formData.email,
+        location: formData.location,
+        stateCity: formData.stateCity,
+        address: formData.address,
+        whoAreYou: formData.whoAreYou,
+        atgFormUrl: atgFormUrl,
+        description: formData.description,
+        donationId: donationId
+      };
+
+      const response = await fetch('https://donourly-backend.onrender.com/api/receivers', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(receiverData)
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        alert('Successfully received the donation! The donor will be notified with your details.');
+        navigate('/#options');
+      } else {
+        alert(`Error: ${result.message}`);
+      }
+    } catch (error) {
+      console.error('Error submitting receiver form:', error);
+      alert('Failed to submit form. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  if (!donationId) {
+    return (
+      <>
+        <Navbar2 />
+        <div style={{ padding: '2rem', textAlign: 'center' }}>
+          <h2>No Donation Selected</h2>
+          <p>Please go back and select a donation first.</p>
+          <button onClick={() => navigate('/#options')}>Go Back</button>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
@@ -20,18 +123,55 @@ const Receiver = () => {
         </BackButton>
       </TopBar>
       <StyledWrapper>
-        <FormContainer>
+        <FormContainer onSubmit={handleSubmit}>
           <FormRow>
-            <InputField type="text" placeholder="Enter your Name" />
-            <InputField type="email" placeholder="Enter your E-Mail" />
+            <InputField 
+              type="text" 
+              name="name"
+              value={formData.name}
+              onChange={handleInputChange}
+              placeholder="Enter your Name" 
+              required
+            />
+            <InputField 
+              type="email" 
+              name="email"
+              value={formData.email}
+              onChange={handleInputChange}
+              placeholder="Enter your E-Mail" 
+              required
+            />
           </FormRow>
           <FormRow>
-            <InputField placeholder="Location" />
-            <InputField placeholder="State/City" />
+            <InputField 
+              name="location"
+              value={formData.location}
+              onChange={handleInputChange}
+              placeholder="Location" 
+              required
+            />
+            <InputField 
+              name="stateCity"
+              value={formData.stateCity}
+              onChange={handleInputChange}
+              placeholder="State/City" 
+              required
+            />
           </FormRow>
           <FormRow>
-            <InputField placeholder="Address" />
-            <SelectField defaultValue="">
+            <InputField 
+              name="address"
+              value={formData.address}
+              onChange={handleInputChange}
+              placeholder="Address" 
+              required
+            />
+            <SelectField 
+              name="whoAreYou"
+              value={formData.whoAreYou}
+              onChange={handleInputChange}
+              required
+            >
               <option value="" disabled>
                 Who are You?
               </option>
@@ -41,12 +181,27 @@ const Receiver = () => {
             </SelectField>
           </FormRow>
           <FormRow>
-            <UploadButton type="button">
-              Upload ATG form <PlusSign>+</PlusSign>
+            <UploadButton as="label">
+              {formData.atgForm ? formData.atgForm.name : 'Upload ATG form'} <PlusSign>+</PlusSign>
+              <input
+                type="file"
+                accept=".pdf,.jpg,.jpeg,.png"
+                onChange={handleFileChange}
+                style={{ display: 'none' }}
+                required
+              />
             </UploadButton>
           </FormRow>
-          <DescriptionField placeholder="Briefly describe about your NGO, organisation etc" />
-          <SubmitButton>SUBMIT</SubmitButton>
+          <DescriptionField 
+            name="description"
+            value={formData.description}
+            onChange={handleInputChange}
+            placeholder="Briefly describe about your NGO, organisation etc" 
+            required
+          />
+          <SubmitButton type="submit" disabled={isSubmitting}>
+            {isSubmitting ? 'SUBMITTING...' : 'SUBMIT'}
+          </SubmitButton>
         </FormContainer>
       </StyledWrapper>
     </>

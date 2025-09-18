@@ -1,7 +1,38 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { Link } from 'react-router-dom';
+
+
+const StyledDonateButton = styled.button`
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: white;
+  background: linear-gradient(135deg, #FDC726 0%, #F0B90B 100%);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  box-shadow: 0 3px 10px rgba(253, 199, 38, 0.3);
+  
+  &:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 6px 20px rgba(253, 199, 38, 0.4);
+    background: linear-gradient(135deg, #F0B90B 0%, #E6A800 100%);
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+`;
 
 
 const StyledActionButtonLink = styled(Link)`
@@ -611,54 +642,78 @@ const Options = () => {
   const { scrollYProgress } = useScroll();
   const backgroundY = useTransform(scrollYProgress, [0, 1], [0, -100]);
   const cardsY = useTransform(scrollYProgress, [0, 1], [0, -50]);
+  
+  // State for real requirements data
+  const [requirements, setRequirements] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  // Dummy request data
-  const dummyRequests = [
-    {
-      id: 1,
-      org: "Hope Foundation",
-      title: "Educational Materials for Rural Schools",
-      description: "We need books, notebooks, and basic stationery for 200 children in remote villages. Your support can help bridge the education gap.",
-      category: "Education",
-      urgency: "high",
-      time: "2 hours ago"
-    },
-    {
-      id: 2,
-      org: "Green Earth NGO",
-      title: "Tree Plantation Drive Support",
-      description: "Join us in our mission to plant 1000 trees this month. We need volunteers and funding for saplings and tools.",
-      category: "Environment",
-      urgency: "medium",
-      time: "5 hours ago"
-    },
-    {
-      id: 3,
-      org: "Meals for All",
-      title: "Monthly Food Distribution",
-      description: "Help us provide nutritious meals to 500 families in need. Every contribution counts towards fighting hunger.",
-      category: "Food",
-      urgency: "high",
-      time: "1 day ago"
-    },
-    {
-      id: 4,
-      org: "Tech for Good",
-      title: "Digital Literacy Program",
-      description: "We're teaching basic computer skills to elderly citizens. Need laptops and volunteer instructors.",
-      category: "Technology",
-      urgency: "low",
-      time: "2 days ago"
-    }
-  ];
+  // Fetch requirements from API
+  useEffect(() => {
+    fetchRequirements();
+  }, []);
 
-  const getUrgencyClass = (urgency: string): string => {
-    switch(urgency) {
-      case 'high': return 'high';
-      case 'medium': return 'medium';
-      case 'low': return 'low';
-      default: return 'medium';
+  const fetchRequirements = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('https://donourly-backend.onrender.com/api/requirements');
+      const result = await response.json();
+      
+      if (result.success) {
+        setRequirements(result.data);
+      } else {
+        setError('Failed to load requirements');
+      }
+    } catch (error) {
+      console.error('Error fetching requirements:', error);
+      setError('Failed to load requirements');
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const handleDonateNow = async (requirementId: string, receiverInfo: any) => {
+    try {
+      // Process donation to requirement
+      const response = await fetch(`https://donourly-backend.onrender.com/api/requirements/${requirementId}/donate`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          donorId: 'current_donor_id' // In a real app, get this from auth context
+        })
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        alert(`Donation started! Here are the receiver details:\nName: ${receiverInfo.receiverName}\nEmail: ${receiverInfo.receiverEmail}`);
+        // Remove the requirement from the list since it's now fulfilled
+        setRequirements(prev => prev.filter((req: any) => req._id !== requirementId));
+      } else {
+        alert(`Error: ${result.message}`);
+      }
+    } catch (error) {
+      console.error('Error processing donation:', error);
+      alert('Failed to process donation. Please try again.');
+    }
+  };
+
+  const formatUrgency = (urgency: string) => {
+    const colors = {
+      'High': '#ff4757',
+      'Medium': '#ffa726',
+      'Low': '#26de81'
+    };
+    return { color: colors[urgency as keyof typeof colors] || '#666', text: urgency };
+  };
+
+  const formatQuantity = (quantity: string, customQuantity?: number) => {
+    if (quantity === 'custom' && customQuantity) {
+      return customQuantity.toString();
+    }
+    return quantity;
   };
 
   return (
@@ -678,13 +733,13 @@ const Options = () => {
             transition={{ duration: 0.8 }}
           >
             <h1 className="main-title">Donor Dashboard</h1>
-            <p className="main-subtitle">Make a difference by supporting meaningful causes</p>
+            <p className="main-subtitle">Make a difference by helping those in need</p>
           </motion.div>
 
           <div className="content-container">
-            {/* Donor Card Section */}
+            {/* Make Donation Section */}
             <motion.div 
-              className="donor-section"
+              className="receiver-section"
               initial={{ opacity: 0, x: -100 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
@@ -694,14 +749,14 @@ const Options = () => {
                 <div className="flip-card-inner">
                   <div className="flip-card-front">
                     <div className="card-icon"></div>
-                    <h2 className="card-heading">BE A DONOR</h2>
-                    <p className="card-subtitle">Your small act can make a big difference.</p>
+                    <h2 className="card-heading">MAKE A DONATION</h2>
+                    <p className="card-subtitle">Share your resources and spread kindness.</p>
                     <div className="features">
                       {[
-                        "Support with time or resources",
-                        "Help communities grow", 
-                        "Be part of positive change",
-                        "Inspire others to give"
+                        "Post donation offerings",
+                        "Help those in need",
+                        "Make a real impact",
+                        "Track your contributions"
                       ].map((text, index) => (
                         <motion.div 
                           key={index}
@@ -717,78 +772,117 @@ const Options = () => {
                       ))}
                     </div>
                     <div className="card-footer">
-                      <div className="hover-indicator">Hover to join →</div>
+                      <div className="hover-indicator">Hover to donate →</div>
                     </div>
                   </div>
                   <div className="flip-card-back">
                     <div className="back-content">
                       <motion.div 
                         className="back-icon"
-                        animate={{ rotate: [0, 10, -10, 0] }}
+                        animate={{ y: [0, -10, 0] }}
                         transition={{ duration: 2, repeat: Infinity }}
                       >
-                        🚀
+                        💝
                       </motion.div>
-                      <h2 className="back-heading">Ready to Make Impact?</h2>
-                      <p className="back-description">Join thousands of donors creating positive change</p>
-                      <StyledActionButtonLink to="/donour">
-                        <span className="button-text">Start Donating</span>
-                        <span className="button-icon">→</span>
-                      </StyledActionButtonLink>
+                      <h2 className="back-heading">Ready to Give?</h2>
+                      <p className="back-description">Post your donation and help someone in need</p>
+                      <Link to="/donour" style={{ textDecoration: 'none' }}>
+                        <StyledDonateButton>
+                          <span className="button-text">Donate Now</span>
+                          <span className="button-icon">→</span>
+                        </StyledDonateButton>
+                      </Link>
                     </div>
                   </div>
                 </div>
               </div>
             </motion.div>
 
-            {/* Live Requests Feed Section */}
+            {/* Active Requirements Section */}
             <motion.div 
-              className="requests-section"
+              className="donations-section"
               initial={{ opacity: 0, x: 100 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: 0.4 }}
             >
-              <div className="requests-card">
-                <div className="requests-header">
-                  <h2 className="requests-title">Live Requests Feed</h2>
-                  <p className="requests-subtitle">Recent requests from NGOs and communities in need</p>
+              <div className="donations-card">
+                <div className="donations-header">
+                  <h2 className="donations-title">Help Requests</h2>
+                  <p className="donations-subtitle">People in your community who need your support</p>
                 </div>
 
-                <div className="requests-feed">
-                  {dummyRequests.map((request, index) => (
-                    <motion.div
-                      key={request.id}
-                      className="request-item"
-                      initial={{ opacity: 0, y: 20 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.4, delay: 0.6 + (index * 0.1) }}
-                      whileHover={{ scale: 1.02 }}
-                    >
-                      <div className="request-header">
-                        <p className="request-org">{request.org}</p>
-                        <span className="request-time">{request.time}</span>
-                      </div>
-                      
-                      <h3 className="request-title">{request.title}</h3>
-                      <p className="request-description">{request.description}</p>
-                      
-                      <div className="request-details">
-                        <span className="request-category">{request.category}</span>
-                        <span className={`request-urgency ${getUrgencyClass(request.urgency)}`}>
-                          {request.urgency.toUpperCase()} PRIORITY
-                        </span>
-                      </div>
-                    </motion.div>
-                  ))}
+                <div className="donations-feed">
+                  {loading ? (
+                    <div style={{ textAlign: 'center', padding: '2rem' }}>
+                      <p>Loading requests...</p>
+                    </div>
+                  ) : error ? (
+                    <div style={{ textAlign: 'center', padding: '2rem', color: 'red' }}>
+                      <p>{error}</p>
+                      <button onClick={fetchRequirements}>Retry</button>
+                    </div>
+                  ) : requirements.length === 0 ? (
+                    <div style={{ textAlign: 'center', padding: '2rem' }}>
+                      <p>No help requests at the moment.</p>
+                    </div>
+                  ) : (
+                    requirements.map((requirement: any, index) => (
+                      <motion.div
+                        key={requirement._id}
+                        className="donation-item"
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.4, delay: 0.6 + (index * 0.1) }}
+                        whileHover={{ scale: 1.02 }}
+                      >
+                        <div className="donation-header">
+                          <p className="donation-donor">{requirement.receiverName}</p>
+                          <span 
+                            className="donation-amount"
+                            style={{ 
+                              background: formatUrgency(requirement.urgency).color,
+                              color: 'white'
+                            }}
+                          >
+                            {formatUrgency(requirement.urgency).text}
+                          </span>
+                        </div>
+                        
+                        <h3 className="donation-title">
+                          {requirement.itemType} - Qty: {formatQuantity(requirement.quantity, requirement.customQuantity)}
+                        </h3>
+                        <p className="donation-description">{requirement.description}</p>
+                        
+                        <div className="donation-details">
+                          <span className="donation-category">{requirement.itemType}</span>
+                          <span className="donation-location">
+                            {new Date(requirement.createdAt).toLocaleDateString()}
+                          </span>
+                        </div>
+
+                        <div className="donation-actions">
+                          <StyledDonateButton
+                            onClick={() => handleDonateNow(requirement._id, {
+                              receiverName: requirement.receiverName,
+                              receiverEmail: requirement.receiverEmail
+                            })}
+                          >
+                            <span>Donate Now</span>
+                            <span className="button-icon">→</span>
+                          </StyledDonateButton>
+                        </div>
+                      </motion.div>
+                    ))
+                  )}
                 </div>
 
                 <div className="view-all-btn">
-                  <Link to="/requests" className="view-all-link">
-                    <span>View All Requests</span>
-                    <span>→</span>
-                  </Link>
+                  <button onClick={fetchRequirements} className="view-all-link">
+                    <span>Refresh Requests</span>
+                    <span>↻</span>
+                  </button>
                 </div>
               </div>
             </motion.div>
