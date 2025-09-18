@@ -610,7 +610,7 @@ const StyledWrapper = styled.div`
     display: flex;
     flex-direction: column;
     gap: 1.2rem;
-    overflow-y: auto;
+    overflow-y: clip;
     flex: 1;
     padding-right: 0.5rem;
     margin-right: -0.5rem;
