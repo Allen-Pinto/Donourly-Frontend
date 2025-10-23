@@ -1,12 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import Navbar2 from '../components/Navbar2';
 
 interface Props {}
 
 const AboutUs: React.FC<Props> = () => {
-  <Navbar2/>
   const { scrollYProgress } = useScroll();
   const backgroundY = useTransform(scrollYProgress, [0, 1], [0, -150]);
   const imageY = useTransform(scrollYProgress, [0, 1], [0, -100]);
@@ -64,7 +62,7 @@ const AboutUs: React.FC<Props> = () => {
           <TeamImage
             as={motion.img}
             style={{ y: imageY }}
-            src="assets/Team.png"
+            src="assets/Team.webp"
             alt="The Team"
             initial={{ opacity: 0, scale: 0.9, rotateY: 15 }}
             whileInView={{ opacity: 1, scale: 1, rotateY: 0 }}
@@ -82,7 +80,7 @@ const AboutUs: React.FC<Props> = () => {
   );
 };
 
-// Updated Styled Components
+// Styled Components
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -96,17 +94,37 @@ const Container = styled.div`
 const MainContainer = styled.div`
   flex: 1;
   display: flex;
-  padding-top: 80px;
   min-height: 100vh;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
 `;
 
 const LeftSection = styled.div`
   flex: 1;
-  padding: 4rem 2rem;
+  padding: 4rem 3rem;
   position: relative;
   display: flex;
   align-items: center;
   overflow: hidden;
+
+  @media (max-width: 1200px) {
+    padding: 3rem 2.5rem;
+  }
+
+  @media (max-width: 1024px) {
+    padding: 3rem 2rem;
+  }
+
+  @media (max-width: 768px) {
+    padding: 3rem 2rem;
+    min-height: auto;
+  }
+
+  @media (max-width: 480px) {
+    padding: 2rem 1.5rem;
+  }
 `;
 
 const ParallaxBackground = styled.div`
@@ -119,12 +137,21 @@ const ParallaxBackground = styled.div`
   opacity: 0.15;
   z-index: 1;
   will-change: transform;
+
+  @media (max-width: 768px) {
+    opacity: 0.1;
+  }
 `;
 
 const Content = styled.div`
   position: relative;
   z-index: 2;
   max-width: 600px;
+  width: 100%;
+
+  @media (max-width: 768px) {
+    max-width: 100%;
+  }
 `;
 
 const Title = styled.h1`
@@ -133,6 +160,21 @@ const Title = styled.h1`
   margin-bottom: 2rem;
   color: #333;
   font-family: 'Poppins', sans-serif;
+
+  @media (max-width: 1024px) {
+    font-size: 42px;
+    margin-bottom: 1.5rem;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 36px;
+    margin-bottom: 1.5rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 28px;
+    margin-bottom: 1.25rem;
+  }
 `;
 
 const Description = styled.p`
@@ -141,6 +183,21 @@ const Description = styled.p`
   line-height: 1.8;
   color: #555;
   font-family: 'Poppins', sans-serif;
+
+  @media (max-width: 1024px) {
+    font-size: 18px;
+    line-height: 1.7;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 17px;
+    line-height: 1.7;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 15px;
+    line-height: 1.6;
+  }
 `;
 
 const RightSection = styled.div`
@@ -163,6 +220,15 @@ const RightSection = styled.div`
     opacity: 0.1;
     z-index: 1;
   }
+
+  @media (max-width: 1024px) {
+    padding: 1.5rem;
+  }
+
+  /* Hide image on tablets and mobile */
+  @media (max-width: 768px) {
+    display: none;
+  }
 `;
 
 const TeamImage = styled.img`
@@ -174,7 +240,6 @@ const TeamImage = styled.img`
   position: relative;
   z-index: 2;
   
-  /* Enhanced shadow effects */
   box-shadow:
     0 25px 50px rgba(0, 0, 0, 0.25),
     0 10px 20px rgba(0, 0, 0, 0.15),
@@ -182,40 +247,15 @@ const TeamImage = styled.img`
   
   transition: all 0.3s ease;
   will-change: transform;
-`;
 
-// Responsive Design
-const ResponsiveContainer = styled.div`
-  @media (max-width: 768px) {
-    ${MainContainer} {
-      flex-direction: column;
-    }
-    
-    ${LeftSection} {
-      padding: 2rem 1rem;
-    }
-    
-    ${Title} {
-      font-size: 36px;
-    }
-    
-    ${Description} {
-      font-size: 18px;
-    }
-    
-    ${RightSection} {
-      min-height: 50vh;
-    }
+  @media (max-width: 1200px) {
+    width: 75%;
+    height: 90%;
   }
-  
-  @media (max-width: 480px) {
-    ${Title} {
-      font-size: 28px;
-    }
-    
-    ${Description} {
-      font-size: 16px;
-    }
+
+  @media (max-width: 1024px) {
+    width: 80%;
+    height: 85%;
   }
 `;
 

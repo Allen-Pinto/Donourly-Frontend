@@ -118,7 +118,7 @@ const WhomWeHelp: React.FC<Props> = () => {
   );
 };
 
-// Updated Styled Components
+// Styled Components with Full Responsive Support
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -134,6 +134,16 @@ const MainContainer = styled.div`
   display: flex;
   padding-top: 80px;
   min-height: 100vh;
+
+  @media (max-width: 1024px) {
+    padding-top: 70px;
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    padding-top: 60px;
+    min-height: auto;
+  }
 `;
 
 const LeftSection = styled.div`
@@ -143,6 +153,19 @@ const LeftSection = styled.div`
   display: flex;
   align-items: center;
   overflow: hidden;
+
+  @media (max-width: 1024px) {
+    padding: 3rem 1.5rem;
+  }
+
+  @media (max-width: 768px) {
+    padding: 2rem 1.5rem;
+    min-height: 50vh;
+  }
+
+  @media (max-width: 480px) {
+    padding: 1.5rem 1rem;
+  }
 `;
 
 const LeftBackground = styled.div`
@@ -161,6 +184,10 @@ const Content = styled.div`
   position: relative;
   z-index: 2;
   max-width: 600px;
+
+  @media (max-width: 768px) {
+    max-width: 100%;
+  }
 `;
 
 const Title = styled.h1`
@@ -169,6 +196,25 @@ const Title = styled.h1`
   margin-bottom: 2rem;
   color: #333;
   font-family: 'Poppins', sans-serif;
+
+  @media (max-width: 1024px) {
+    font-size: 42px;
+    margin-bottom: 1.5rem;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 36px;
+    margin-bottom: 1.5rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 28px;
+    margin-bottom: 1rem;
+  }
+
+  @media (max-width: 360px) {
+    font-size: 24px;
+  }
 `;
 
 const Description = styled.p`
@@ -177,6 +223,25 @@ const Description = styled.p`
   line-height: 1.8;
   color: #555;
   font-family: 'Poppins', sans-serif;
+
+  @media (max-width: 1024px) {
+    font-size: 18px;
+    line-height: 1.7;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  @media (max-width: 360px) {
+    font-size: 14px;
+  }
 `;
 
 const FirstWord = styled.span`
@@ -200,6 +265,50 @@ const FirstWord = styled.span`
     height: 250px;
     width: 250px;
   }
+
+  @media (max-width: 1024px) {
+    font-size: 36px;
+
+    &::before {
+      height: 220px;
+      width: 220px;
+      top: -85px;
+      left: -40px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    font-size: 32px;
+
+    &::before {
+      height: 200px;
+      width: 200px;
+      top: -75px;
+      left: -35px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    font-size: 26px;
+
+    &::before {
+      height: 160px;
+      width: 160px;
+      top: -60px;
+      left: -28px;
+    }
+  }
+
+  @media (max-width: 360px) {
+    font-size: 22px;
+
+    &::before {
+      height: 140px;
+      width: 140px;
+      top: -52px;
+      left: -24px;
+    }
+  }
 `;
 
 const RightSection = styled.div`
@@ -210,6 +319,20 @@ const RightSection = styled.div`
   padding: 2rem;
   position: relative;
   overflow: hidden;
+
+  @media (max-width: 1024px) {
+    padding: 1.5rem;
+  }
+
+  @media (max-width: 768px) {
+    padding: 2rem 1.5rem;
+    min-height: 60vh;
+  }
+
+  @media (max-width: 480px) {
+    padding: 1.5rem 1rem;
+    min-height: auto;
+  }
 `;
 
 const RightBackground = styled.div`
@@ -229,6 +352,20 @@ const GraphicsContainer = styled.div`
   width: 100%;
   height: 100%;
   z-index: 2;
+
+  @media (max-width: 768px) {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    padding: 20px 0;
+  }
+
+  @media (max-width: 480px) {
+    gap: 20px;
+    padding: 15px 0;
+  }
 `;
 
 const BeneficiaryCircle = styled.div`
@@ -268,6 +405,43 @@ const BeneficiaryCircle = styled.div`
     top: 48%;
     right: 15%;
   }
+
+  @media (max-width: 1200px) {
+    &.ngos {
+      top: 10%;
+      left: 15%;
+    }
+
+    &.low-income {
+      top: 12%;
+      right: 10%;
+    }
+
+    &.orphanages {
+      top: 38%;
+      left: 12%;
+    }
+
+    &.old-age {
+      top: 68%;
+      left: 14%;
+    }
+
+    &.children {
+      top: 75%;
+      right: 8%;
+    }
+
+    &.needy {
+      top: 45%;
+      right: 12%;
+    }
+  }
+
+  @media (max-width: 768px) {
+    position: static;
+    margin: 0;
+  }
 `;
 
 const CircleIcon = styled.img`
@@ -287,6 +461,18 @@ const CircleIcon = styled.img`
       0 20px 40px rgba(0, 0, 0, 0.25),
       0 0 0 3px rgba(255, 255, 255, 1);
   }
+
+  @media (max-width: 768px) {
+    width: 70px;
+    height: 70px;
+    padding: 12px;
+  }
+
+  @media (max-width: 480px) {
+    width: 60px;
+    height: 60px;
+    padding: 10px;
+  }
 `;
 
 const CircleLabel = styled.span`
@@ -302,60 +488,19 @@ const CircleLabel = styled.span`
   text-align: center;
   white-space: nowrap;
   border: 1px solid rgba(255, 255, 255, 0.3);
-`;
 
-// Responsive Design
-const ResponsiveContainer = styled.div`
   @media (max-width: 768px) {
-    ${MainContainer} {
-      flex-direction: column;
-    }
-    
-    ${LeftSection} {
-      padding: 2rem 1rem;
-    }
-    
-    ${Title} {
-      font-size: 36px;
-    }
-    
-    ${Description} {
-      font-size: 18px;
-    }
-    
-    ${FirstWord} {
-      font-size: 28px;
-    }
-    
-    ${RightSection} {
-      min-height: 50vh;
-    }
-    
-    ${BeneficiaryCircle} {
-      position: static;
-      margin: 10px;
-    }
-    
-    ${GraphicsContainer} {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 20px;
-    }
+    font-size: 13px;
+    padding: 7px 12px;
+    margin-top: 12px;
   }
-  
+
   @media (max-width: 480px) {
-    ${Title} {
-      font-size: 28px;
-    }
-    
-    ${Description} {
-      font-size: 16px;
-    }
-    
-    ${FirstWord} {
-      font-size: 24px;
-    }
+    font-size: 12px;
+    padding: 6px 10px;
+    margin-top: 10px;
+    white-space: normal;
+    max-width: 120px;
   }
 `;
 

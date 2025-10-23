@@ -10,7 +10,6 @@ module.exports = {
         black: "#000000",
       },
       fontFamily: {
-        // Add Poppins as default sans font
         sans: ["Poppins", "sans-serif"],
       },
     },

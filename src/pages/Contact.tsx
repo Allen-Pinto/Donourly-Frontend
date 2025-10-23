@@ -162,7 +162,7 @@ const Contact: React.FC<Props> = () => {
   );
 };
 
-// Updated Styled Components
+// Fully Responsive Styled Components
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -178,6 +178,16 @@ const MainContainer = styled.div`
   display: flex;
   padding-top: 80px;
   min-height: 100vh;
+
+  @media (max-width: 1024px) {
+    padding-top: 70px;
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    padding-top: 60px;
+    min-height: auto;
+  }
 `;
 
 const LeftSection = styled.div`
@@ -188,6 +198,19 @@ const LeftSection = styled.div`
   align-items: center;
   justify-content: center;
   overflow: hidden;
+
+  @media (max-width: 1024px) {
+    padding: 3rem 2rem;
+  }
+
+  @media (max-width: 768px) {
+    padding: 2.5rem 1.5rem;
+    min-height: auto;
+  }
+
+  @media (max-width: 480px) {
+    padding: 2rem 1rem;
+  }
 `;
 
 const LeftBackground = styled.div`
@@ -207,6 +230,11 @@ const Content = styled.div`
   z-index: 2;
   max-width: 600px;
   text-align: left;
+
+  @media (max-width: 768px) {
+    max-width: 100%;
+    text-align: center;
+  }
 `;
 
 const Title = styled.h1`
@@ -215,6 +243,26 @@ const Title = styled.h1`
   margin-bottom: 2rem;
   color: #333;
   font-family: 'Poppins', sans-serif;
+
+  @media (max-width: 1024px) {
+    font-size: 42px;
+    margin-bottom: 1.5rem;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 36px;
+    margin-bottom: 1.5rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 28px;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+  }
+
+  @media (max-width: 360px) {
+    font-size: 24px;
+  }
 `;
 
 const Description = styled.p`
@@ -223,6 +271,19 @@ const Description = styled.p`
   line-height: 1.8;
   color: #555;
   font-family: 'Poppins', sans-serif;
+
+  @media (max-width: 1024px) {
+    font-size: 17px;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 15px;
+  }
 `;
 
 const GetBackText = styled.p`
@@ -231,6 +292,19 @@ const GetBackText = styled.p`
   margin-top: 1rem;
   color: #555;
   font-family: 'Poppins', sans-serif;
+
+  @media (max-width: 1024px) {
+    font-size: 18px;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 17px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 16px;
+    margin-top: 0.75rem;
+  }
 `;
 
 const DonationBox = styled.div`
@@ -249,6 +323,23 @@ const DonationBox = styled.div`
   align-items: center;
   justify-content: space-evenly;
   cursor: pointer;
+
+  @media (max-width: 1024px) {
+    width: 300px;
+    padding: 1.75rem;
+    margin-top: 2.5rem;
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    max-width: 350px;
+    margin: 2rem auto 0;
+  }
+
+  @media (max-width: 480px) {
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+  }
 `;
 
 const DonationTitle = styled.h3`
@@ -256,6 +347,14 @@ const DonationTitle = styled.h3`
   font-weight: 600;
   color: #333;
   margin-bottom: 0.5rem;
+
+  @media (max-width: 768px) {
+    font-size: 19px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 18px;
+  }
 `;
 
 const DonationDescription = styled.p`
@@ -265,6 +364,11 @@ const DonationDescription = styled.p`
   margin-bottom: 1.5rem;
   text-align: center;
   max-width: 250px;
+
+  @media (max-width: 480px) {
+    font-size: 13px;
+    margin-bottom: 1.25rem;
+  }
 `;
 
 const DonationButton = styled.button`
@@ -284,6 +388,11 @@ const DonationButton = styled.button`
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
   }
+
+  @media (max-width: 480px) {
+    padding: 10px 25px;
+    font-size: 15px;
+  }
 `;
 
 const RightSection = styled.div`
@@ -292,6 +401,18 @@ const RightSection = styled.div`
   align-items: center;
   justify-content: center;
   padding: 2rem;
+
+  @media (max-width: 1024px) {
+    padding: 2rem 1.5rem;
+  }
+
+  @media (max-width: 768px) {
+    padding: 2rem 1.5rem 3rem;
+  }
+
+  @media (max-width: 480px) {
+    padding: 1.5rem 1rem 2.5rem;
+  }
 `;
 
 const FormWrapper = styled.div`
@@ -304,6 +425,24 @@ const FormWrapper = styled.div`
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.3);
   text-align: center;
+
+  @media (max-width: 1024px) {
+    max-width: 450px;
+    padding: 2.25rem;
+  }
+
+  @media (max-width: 768px) {
+    max-width: 100%;
+  }
+
+  @media (max-width: 480px) {
+    padding: 1.75rem;
+    border-radius: 15px;
+  }
+
+  @media (max-width: 360px) {
+    padding: 1.5rem;
+  }
 `;
 
 const FormTitle = styled.h2`
@@ -311,12 +450,35 @@ const FormTitle = styled.h2`
   font-weight: 600;
   margin-bottom: 2rem;
   color: #333;
+
+  @media (max-width: 1024px) {
+    font-size: 28px;
+    margin-bottom: 1.75rem;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 26px;
+    margin-bottom: 1.5rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 24px;
+    margin-bottom: 1.25rem;
+  }
 `;
 
 const Form = styled.form`
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+
+  @media (max-width: 768px) {
+    gap: 1.25rem;
+  }
+
+  @media (max-width: 480px) {
+    gap: 1rem;
+  }
 `;
 
 const FormInput = styled.input`
@@ -338,6 +500,17 @@ const FormInput = styled.input`
   
   &::placeholder {
     color: #999;
+  }
+
+  @media (max-width: 768px) {
+    padding: 14px;
+    font-size: 15px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 12px;
+    font-size: 14px;
+    border-radius: 8px;
   }
 `;
 
@@ -363,6 +536,18 @@ const FormTextarea = styled.textarea`
   &::placeholder {
     color: #999;
   }
+
+  @media (max-width: 768px) {
+    padding: 14px;
+    font-size: 15px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 12px;
+    font-size: 14px;
+    border-radius: 8px;
+    rows: 4;
+  }
 `;
 
 const FormButton = styled.button`
@@ -381,6 +566,17 @@ const FormButton = styled.button`
     background-color: #333;
     transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  }
+
+  @media (max-width: 768px) {
+    padding: 16px;
+    font-size: 17px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 14px;
+    font-size: 16px;
+    border-radius: 8px;
   }
 `;
 

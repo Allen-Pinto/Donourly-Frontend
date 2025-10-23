@@ -4,8 +4,7 @@ import styled from "styled-components";
 import { motion } from "framer-motion";
 
 // Import pages
-import Home from "./pages/Home";
-import Home2 from "./pages/Home2";
+import Home from "./pages/Home"; // ✅ Only one Home component now!
 import About from "./pages/About";
 import WhomWeHelp from "./pages/WhomWeHelp";
 import Contact from "./pages/Contact";
@@ -94,7 +93,8 @@ export default function App() {
 
         <ScrollContainer>
           <SectionWrapper id="home">
-            {userRole === 'donor' ? <Home /> : <Home2 />}
+            {/* ✅ Single Home component with isDonateMode prop */}
+            <Home isDonateMode={userRole === 'donor'} />
           </SectionWrapper>
 
           <SectionWrapper id="about">
